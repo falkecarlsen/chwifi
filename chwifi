@@ -1,0 +1,99 @@
+#!/bin/bash
+# netctl managing script for easier workday mornings and afternoons
+
+# TODO; cache following four passwords from aau-site
+
+netctl_location="/etc/netctl/"
+
+# quick functions for home/work actions on network manager of choice
+disconnect_home() {
+  echo Disconnecting from home
+  netctl stop home
+}
+
+connect_home() {
+  echo Connecting to home
+  netctl start home
+}
+
+disconnect_work() {
+  echo Disconnecting from work
+  netctl stop aau
+}
+
+connect_work() {
+  echo Connecting to work
+  netctl start aau
+}
+
+connect() {
+  echo Connecting to $1
+  netctl start $1
+}
+
+# safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
+set_adapter_down() {
+  print_adapter_status
+  ip link set wlp3s0 down
+  print_adapter_status  
+}
+
+print_adapter_status() {
+  ip link | grep wlp3s0
+}
+
+# perl regex; find "Key=" and replace all chars after, on given line, with
+# parameter $2, do this on file at $1
+replace_password() {
+  perl -pi -e "s/(?<=Key=).*$/$2/" $1
+}
+
+# call function with two args; concatenation of $netctl_loc and $1, and $2
+change_profile_password() {
+  replace_password $netctl_location$1 $2
+}
+
+# prompt if user wants to change password
+change_password_prompt() {
+  read -p "Do you want to change the given password? (y/n) " yn
+  if [ "$yn" != "${yn#[Yy]}" ]; then
+    # read profile and password in
+    read -p "What password do you want to substitute with? " password
+    change_profile_password $1 $password
+  else
+    # connect with first argument, whihc must be profile
+    # TODO; test this
+    connect $1
+  fi
+}
+
+change_password_aau() {
+  # quick and dirty 1DAY-profile
+  change_profile_password "aau" $1
+}
+
+if [[ $# -eq 0 ]] ; then
+  echo No arguments, connecting to home
+  disconnect_work
+  set_adapter_down
+  connect_home
+  print_adapter_status
+elif [[ $# -eq 1 ]]; then
+  # if alpha, num, alpha regex, then 1day password
+  # TODO; if "aau" just reset adapter and connect to work
+  if [[ "$1" =~ ^[a-z]+[0-9]+[a-z]+$ ]]; then
+    echo Connecting to AAU-1-DAY with password: $1
+    disconnect_home
+    set_adapter_down
+    change_password_aau $1
+    connect_work
+    print_adapter_status
+  else
+    echo -e "This doesn't seem to be a AAU-1-DAY password, please check"
+  fi
+elif [[ $# -eq 2 ]]; then
+  # TODO; check if profile exists, if not, create profile and start
+  echo Received SSID: $1 and password: $2
+fi
+
+exit 0
