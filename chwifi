@@ -35,7 +35,7 @@ connect() {
 set_adapter_down() {
   print_adapter_status
   ip link set wlp3s0 down
-  print_adapter_status  
+  print_adapter_status
 }
 
 print_adapter_status() {
@@ -89,7 +89,7 @@ elif [[ $# -eq 1 ]]; then
     connect_work
     print_adapter_status
   else
-    echo -e "This doesn't seem to be a AAU-1-DAY password, please check"
+    echo -e "This doesn't seem to be an AAU-1-DAY password, please check"
   fi
 elif [[ $# -eq 2 ]]; then
   # TODO; check if profile exists, if not, create profile and start
