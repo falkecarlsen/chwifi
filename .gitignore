@@ -1,0 +1,3 @@
+#ignore cas-get.sh-specific cached files
+.cookie
+.headers
