@@ -1,44 +1,47 @@
 #!/bin/bash
 # netctl managing script for easier workday mornings and afternoons
 
-# TODO; cache following four passwords from aau-site
+# debug-flag, '-' signifying debug-mode
+set +x
+
+# source helper-script for calling getcurrentpassword-function
+source getpasswords.sh
 
 wireless_adapter="wlp3s0"
 netctl_location="/etc/netctl/"
 netctl_home_profile="home"
 netctl_work_profile="aau"
+network_up_host="aau.dk"
 
 # quick functions for home/work actions on network manager
 disconnect_home() {
-  echo "Disconnecting from home (profile: $netctl_home_profile)"
+  printf '%s\n' "Disconnecting from home (profile: $netctl_home_profile)"
   netctl stop $netctl_home_profile
 }
 
 connect_home() {
-  echo "Connecting to home (profile: $netctl_home_profile)"
+  printf '%s\n' "Connecting to home (profile: $netctl_home_profile)"
   netctl start $netctl_home_profile
 }
 
 disconnect_work() {
-  echo "Disconnecting from work (profile: $netctl_work_profile)"
+  printf '%s\n' "Disconnecting from work (profile: $netctl_work_profile)"
   netctl stop $netctl_work_profile
 }
 
 connect_work() {
-  echo "Connecting to work (profile: $netctl_work_profile)"
+  printf '%s\n' "Connecting to work (profile: $netctl_work_profile)"
   netctl start $netctl_work_profile
 }
 
 connect() {
-  echo Connecting to $1
+  printf '%s\n' "Connecting to $1"
   netctl start $1
 }
 
 # safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
 set_adapter_down() {
-  print_adapter_status
   ip link set $wireless_adapter down
-  print_adapter_status
 }
 
 print_adapter_status() {
@@ -75,42 +78,71 @@ change_password_aau() {
   change_profile_password "aau" $1
 }
 
-# set verbosity and shift params down 
-if [[ "-v" == "$1" ]]; then
-  VERBOSE=1
-  shift
-fi
-echo () {
-  [[ "$VERBOSE" ]] && builtin echo $@
+wait_for_network() {
+    until $(curl --output /dev/null --silent --head --fail --connect-timeout 1 $network_up_host); do
+        printf '%s\n' "Waiting for connection..."
+    done
 }
 
+# set verbosity and shift params down 
+#if [[ "-v" == "$1" ]]; then
+#  VERBOSE=1
+#  shift
+#fi
+
+# overload echo-function to use builtin echo if verbosity is set high
+#echo () {
+#  [[ "$VERBOSE" ]] && builtin echo $@
+#}
+
 if [[ $# -eq 0 ]] ; then
-  echo No arguments, connecting to home
+  printf '%s\n' "No arguments, connecting to home"
   disconnect_work
   set_adapter_down
   connect_home
   print_adapter_status
 elif [[ $# -eq 1 ]]; then
-  # if alpha, num, alpha regex, then 1day password
-  # TODO; if "aau" just reset adapter and connect to work
 
+  # if aau, then find password, connect and update cached passwords when connection is given
   if [[ "$1" =~ aau ]]; then
-    echo AAU-keyword found
-    # TODO: check list for password for given date, and connect if match found
+    printf '%s\n' "AAU-keyword found, checking for cached password"
+    # grab current password from helper
+    current_password=$(getcurrentpassword)
+
+    # if no cached password, prompt for password
+    #if [[ -z "$current_password" ]]; then
+    if [[ $? -eq 1 ]]; then
+        printf '%s' "No cached password found, input password manually: "
+        read current_password
+    else
+        # print daily password, if found
+        printf '%s\n' "Daily AAU-1-DAY password is: $current_password"
+    fi
+    disconnect_home
+    set_adapter_down
+    change_password_aau $current_password
+    connect_work
+    # call function to update passwords once connection is established
+    printf '%s\n' "Waiting for network connection..."
+    wait_for_network
+    printf '%s\n' "Network connection established, updating cached passwords"
+    updatepasswords
+  # if alpha, num, alpha regex, then 1day password
   elif [[ "$1" =~ ^[a-z]+[0-9]+[a-z]+$ ]]; then
-    echo Connecting to AAU-1-DAY with password: $1
+    printf '%s\n' "Connecting to AAU-1-DAY with password: $1"
     disconnect_home
     set_adapter_down
     change_password_aau $1
     connect_work
     print_adapter_status
     # TODO: when at work, update passwdlist
+    update
   else
-    echo -e "This doesn't seem to be an AAU-1-DAY password, please check"
+    printf '%s\n' "This doesn't seem to be an AAU-1-DAY password, please check"
   fi
 elif [[ $# -eq 2 ]]; then
   # TODO; check if profile exists, if not, create profile and start
-  echo Received SSID: $1 and password: $2
+  printf '%s\n' "Received SSID: $1 and password: $2"
 fi
 
 exit 0
