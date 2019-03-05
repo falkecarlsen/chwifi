@@ -1,4 +1,5 @@
 #ignore cas-get.sh-specific cached files
 oneday.html
+passwords.txt
 .cookie
 .headers
