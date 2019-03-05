@@ -5,7 +5,7 @@ PASSWORD_HTML_FILE="oneday.html"
 PASSWORD_FILE="passwords.txt"
 DATE=$(date +%d/%m/%Y)
 
-function update() {
+updatepasswords() {
     source credentials.txt
     echo Sourced credentials with username: $USERNAME
     source cas-get.sh $DEST $USERNAME $PASSWORD > $PASSWORD_HTML_FILE
@@ -14,7 +14,7 @@ function update() {
     echo Extracted passwords to $PASSWORD_FILE
 }
 
-function getcurrenctpassword() {
+function getcurrentpassword() {
     echo Current date is: $DATE
     readarray -t PASSWORD_ARRAY < passwords.txt
     for i in {0..9}
