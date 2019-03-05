@@ -3,6 +3,7 @@
 
 # TODO; cache following four passwords from aau-site
 
+wireless_adapter="wlp3s0"
 netctl_location="/etc/netctl/"
 netctl_home_profile="home"
 netctl_work_profile="aau"
@@ -36,12 +37,12 @@ connect() {
 # safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
 set_adapter_down() {
   print_adapter_status
-  ip link set wlp3s0 down
+  ip link set $wireless_adapter down
   print_adapter_status
 }
 
 print_adapter_status() {
-  ip link | grep wlp3s0
+  ip link | grep $wireless_adapter
 }
 
 # perl regex; find "Key=" and replace all chars after, on given line, with
@@ -93,7 +94,6 @@ elif [[ $# -eq 1 ]]; then
   # if alpha, num, alpha regex, then 1day password
   # TODO; if "aau" just reset adapter and connect to work
 
-  # if 
   if [[ "$1" =~ aau ]]; then
     echo AAU-keyword found
     # TODO: check list for password for given date, and connect if match found
