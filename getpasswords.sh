@@ -1,5 +1,6 @@
 #!/bin/bash
 # handles fetching of passwords, extracting, writing to file, and returning current, daily password
+
 DEST="https://wifipassword.aau.dk/oneday"
 PASSWORD_HTML_FILE="oneday.html"
 PASSWORD_FILE="passwords.txt"
@@ -7,32 +8,26 @@ DATE=$(date +%d/%m/%Y)
 
 updatepasswords() {
     source credentials.txt
-    echo Sourced credentials with username: $USERNAME
+    printf '%s\n' "Sourced credentials with username: $USERNAME"
     source cas-get.sh $DEST $USERNAME $PASSWORD > $PASSWORD_HTML_FILE
-    echo Updated local cache of passwords
     source extractpasswd.sh $PASSWORD_HTML_FILE > $PASSWORD_FILE
-    echo Extracted passwords to $PASSWORD_FILE
+    printf '%s\n' "Fetched, extracted updated passwords to $PASSWORD_FILE"
 }
 
 function getcurrentpassword() {
-    echo Current date is: $DATE
-    readarray -t PASSWORD_ARRAY < passwords.txt
+    # if file does not exist, then return error
+    if [[ ! -f $PASSWORD_FILE ]]; then
+        return 1
+    fi
+    readarray -t PASSWORD_ARRAY < $PASSWORD_FILE
     for i in {0..9}
     do 
-        echo i:$i array: ${PASSWORD_ARRAY[$i]}
+        # if password found, echo it, and return
         if [[ ${PASSWORD_ARRAY[$i]} =~ $DATE ]]; then
-            echo Got a match: at i: $i, at i-1: ${PASSWORD_ARRAY[$i-1]}
-            builtin echo ${PASSWORD_ARRAY[$i-1]}
+            echo ${PASSWORD_ARRAY[$i-1]}
+            return 0 
         fi
     done
+    # else return error
+    return 1 
 }
-
-# set verbosity and shift params down 
-if [[ "-v" == "$1" ]]; then
-  VERBOSE=1
-  shift
-fi
-echo () {
-  [[ "$VERBOSE" ]] && builtin echo $@
-}
-
