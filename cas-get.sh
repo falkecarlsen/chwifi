@@ -15,14 +15,8 @@ CAS_HOSTNAME=login.aau.dk
 USERNAME=$2
 PASSWORD=$3
 
-# Debug printing
-echo "Destination: $DEST"
-echo "Encoded dest: $ENCODED_DEST"
-echo "Username: $USERNAME"
-echo "Password: $PASSWORD"
-
 #Temporary files used by curl to store cookies and http headers
-COOKIE_JAR=.cookieJar
+COOKIE_JAR=.cookie
 HEADER_DUMP_DEST=.headers
 rm $COOKIE_JAR
 rm $HEADER_DUMP_DEST
@@ -57,8 +51,5 @@ curl -s -k -b $COOKIE_JAR -c $COOKIE_JAR $CURL_DEST
 
 #If our destination is not a GET we'll need to do a GET to, say, the user dashboard here
 
-echo "marker final"
-
 #Visit the place we actually wanted to go to, note the '-L' flag to follow redirects, which is needed at wifipassword.aau.dk
-#curl -k -L -b $COOKIE_JAR "$NON_SECURE_DEST"
 curl -k -L -b $COOKIE_JAR "$ENCODED_DEST"
