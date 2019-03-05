@@ -28,7 +28,7 @@ rm $HEADER_DUMP_DEST
 CAS_ID=`curl -s -k -c $COOKIE_JAR https://$CAS_HOSTNAME/cas/login?service=$ENCODED_DEST | grep name=.lt | sed 's/.*value..//' | sed 's/\".*//'`
 
 if [[ "$CAS_ID" = "" ]]; then
-   echo "Login ticket is empty."
+   printf '%s\n' "Login ticket is empty."
    exit 1
 fi
 
@@ -42,7 +42,7 @@ curl -s -k --data "username=$USERNAME&password=$PASSWORD&lt=$CAS_ID&execution=e1
 CURL_DEST=`grep Location $HEADER_DUMP_DEST | sed 's/Location: //'`
 
 if [[ "$CURL_DEST" = "" ]]; then
-    echo "Cannot login. Check if you can login in a browser using user/pass = $USERNAME/$PASSWORD and the following url: https://$CAS_HOSTNAME/cas/login?service=$ENCODED_DEST"
+    printf '%s\n' "Cannot login. Check if you can login in a browser using user/pass = $USERNAME/$PASSWORD and the following url: https://$CAS_HOSTNAME/cas/login?service=$ENCODED_DEST"
     exit 1
 fi
 
