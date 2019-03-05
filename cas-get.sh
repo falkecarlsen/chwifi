@@ -52,4 +52,4 @@ curl -s -k -b $COOKIE_JAR -c $COOKIE_JAR $CURL_DEST
 #If our destination is not a GET we'll need to do a GET to, say, the user dashboard here
 
 #Visit the place we actually wanted to go to, note the '-L' flag to follow redirects, which is needed at wifipassword.aau.dk
-curl -k -L -b $COOKIE_JAR "$ENCODED_DEST"
+curl -s -k -L -b $COOKIE_JAR "$ENCODED_DEST"
