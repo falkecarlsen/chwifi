@@ -92,13 +92,19 @@ if [[ $# -eq 0 ]] ; then
 elif [[ $# -eq 1 ]]; then
   # if alpha, num, alpha regex, then 1day password
   # TODO; if "aau" just reset adapter and connect to work
-  if [[ "$1" =~ ^[a-z]+[0-9]+[a-z]+$ ]]; then
+
+  # if 
+  if [[ "$1" =~ aau ]]; then
+    echo AAU-keyword found
+    # TODO: check list for password for given date, and connect if match found
+  elif [[ "$1" =~ ^[a-z]+[0-9]+[a-z]+$ ]]; then
     echo Connecting to AAU-1-DAY with password: $1
     disconnect_home
     set_adapter_down
     change_password_aau $1
     connect_work
     print_adapter_status
+    # TODO: when at work, update passwdlist
   else
     echo -e "This doesn't seem to be an AAU-1-DAY password, please check"
   fi
