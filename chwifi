@@ -4,26 +4,28 @@
 # TODO; cache following four passwords from aau-site
 
 netctl_location="/etc/netctl/"
+netctl_home_profile="home"
+netctl_work_profile="aau"
 
-# quick functions for home/work actions on network manager of choice
+# quick functions for home/work actions on network manager
 disconnect_home() {
-  echo Disconnecting from home
-  netctl stop home
+  echo "Disconnecting from home (profile: $netctl_home_profile)"
+  netctl stop $netctl_home_profile
 }
 
 connect_home() {
-  echo Connecting to home
-  netctl start home
+  echo "Connecting to home (profile: $netctl_home_profile)"
+  netctl start $netctl_home_profile
 }
 
 disconnect_work() {
-  echo Disconnecting from work
-  netctl stop aau
+  echo "Disconnecting from work (profile: $netctl_work_profile)"
+  netctl stop $netctl_work_profile
 }
 
 connect_work() {
-  echo Connecting to work
-  netctl start aau
+  echo "Connecting to work (profile: $netctl_work_profile)"
+  netctl start $netctl_work_profile
 }
 
 connect() {
@@ -61,7 +63,7 @@ change_password_prompt() {
     read -p "What password do you want to substitute with? " password
     change_profile_password $1 $password
   else
-    # connect with first argument, whihc must be profile
+    # connect with first argument, which must be profile
     # TODO; test this
     connect $1
   fi
