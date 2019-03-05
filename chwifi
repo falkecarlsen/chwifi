@@ -74,6 +74,15 @@ change_password_aau() {
   change_profile_password "aau" $1
 }
 
+# set verbosity and shift params down 
+if [[ "-v" == "$1" ]]; then
+  VERBOSE=1
+  shift
+fi
+echo () {
+  [[ "$VERBOSE" ]] && builtin echo $@
+}
+
 if [[ $# -eq 0 ]] ; then
   echo No arguments, connecting to home
   disconnect_work
