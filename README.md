@@ -42,7 +42,7 @@ network_up_host="aau.dk"
 > If required for specific use-case, a config-option is available to disable internal sudo-prefix to priviledged commands. This is **not advised**.
 
 Set internal `sudo` for priviledged commands. Defaults to true. Set `sudo` for true, and null for false, e.g.; `sudo=""`.
-```
+```shell
 sudo="sudo"
 ```
 
@@ -63,7 +63,7 @@ To manually enter new, daily password for work-profile, pass a single argument o
 ```
 
 ## Example
-```shell
+```
 user@hostname ~> ./chwifi
 No arguments, connecting to home
 Disconnecting from work (profile: work)
