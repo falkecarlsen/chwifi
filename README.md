@@ -33,5 +33,4 @@ sudo ./chwifi args
 ## Todo
 - [ ] Implement a way to portably cache or reuse `sudo` session for `netctl` operations
 - [ ] Relax matching of parameters to manual input of password to allow for non-AAU use-cases
-- [ ] Relinquish control of prompt upon connection, but still execute network-wait- and password-update-routine
-- 
+- [ ] Relinquish control of prompt upon connection, but still execute network-wait- and password-update-routine 
