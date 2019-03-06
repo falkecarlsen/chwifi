@@ -7,28 +7,30 @@ Note that this script has been developed specifically for use at Aalborg Univers
 
 ## Usage
 To connect to home, pass no arguments:
-
-```sh
+```shell
 ./chwifi
 ```
 
-To connect to work with cached password, pass `work`:
+For `chwifi` to automatically cache passwords, edit `credentials.txt` with appropriate credentials:
+```shell
+USERNAME="username"
+PASSWORD="password"
+```
 
-```sh
+To connect to work with cached password, pass `work`:
+```shell
 ./chwifi work
 ```
 
 To manually enter new, daily password for work-profile, pass a single argument of the form `[a-z]+[0-9]+[a-z]+`:
-
-```sh
+```shell
 ./chwifi foo42bar
 ```
 
 > To avoid typing your `sudo` password multiple times, you *can* run the script with `sudo`, and the script should operate nicely, but you do so at your own risk.
 
 To run whole script as `sudo`, removing the need to type your password multiple times, form script-call as:
-
-```sh
+```shell
 sudo ./chwifi args
 ```
 
