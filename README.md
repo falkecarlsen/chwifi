@@ -1,14 +1,15 @@
 # chwifi
-This script eases network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. 
+This tool automates network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. 
 
-Through scripting CAS-login, downloading currently available four passwords, caching them locally, and matching daily password with given date, automatic network-manager profile configuration is achieved for following three days. If `chwifi` has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration.
+Through scripting CAS-login, downloading currently available passwords, caching them locally, and matching daily password with given date, automatic network-manager profile configuration is achieved for following days specified by service. 
+In the case of Aalborg University; if `chwifi` has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration, thus ensuring no manual input for consecutive five-day workweeks.
 
 Note that this script has been developed specifically for use at Aalborg University's campuses but should be easily adaptable to other CAS-like authentication systems.
 
 ## Configuration
 All configuration is located in the `config` file. Note that most can be left to defaults. 
 
-For `chwifi` to automatically cache passwords, edit `config` with appropriate credentials:
+For `chwifi` to automatically cache passwords, edit `config` with appropriate credentials.
 ```shell
 # Credentials for CAS-authentication system.
 username="username"
@@ -46,17 +47,17 @@ sudo="sudo"
 ```
 
 ## Usage
-To connect to home, pass no arguments:
+To connect to home, pass no arguments.
 ```shell
 ./chwifi
 ```
 
-To connect to work with cached password, pass `work`:
+To connect to work with cached password, pass argument `work`.
 ```shell
 ./chwifi work
 ```
 
-To manually enter new, daily password for work-profile, pass a single argument of the form `[a-z]+[0-9]+[a-z]+`:
+To manually enter new, daily password for work-profile, pass a single argument of the form `[a-z]+[0-9]+[a-z]+`.
 ```shell
 ./chwifi foo42bar
 ```
@@ -76,7 +77,7 @@ Fetched and extracted updated passwords to 'passwords'
 ```
 
 ## Dependencies
-Following lists dependencies with most recently tested version of commands appended to name
+Following lists dependencies with most recently tested version of commands appended to name:
 - `bash` `GNU bash, version 5.0.0(1)-release` required to run script
 - `sudo` `v1.8.27` required to execute priviledged commands
 - `netctl` `v1.20` or other network manager that takes arguments of the form `network_manager` `operation` `profile`
@@ -91,5 +92,5 @@ Following lists dependencies with most recently tested version of commands appen
     - [ ] Specifying an existing profile as parameter should switch to it
     - [ ] Implement marking of profiles subject to a rolling-password model
     - [ ] Specifying an SSID and password should create a new profile, optionally with a rolling-password flag
-- [ ] Relax matching of parameters to manual input of password to allow for non-AAU use-cases. Optionally abstract to config-option
+- [ ] Relax matching of parameters to manual input of password to allow for non-AAU use-cases. Optionally abstract to config
 - [ ] Relinquish control of prompt upon connection, but still execute network-wait- and password-update-routine 
