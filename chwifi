@@ -1,9 +1,6 @@
 #!/bin/bash
 # netctl managing script for easier workday mornings and afternoons
 
-# debug-flag, '-' signifying debug-mode
-set +x
-
 # source helper-script for calling getcurrentpassword and updatepasswords-function
 source passwordhandler.sh
 
@@ -13,32 +10,32 @@ source config
 # quick functions for home/work actions on network manager
 disconnect_home() {
   printf '%s\n' "Disconnecting from home (profile: $network_manager_home_profile)"
-  $network_manager $network_manager_disconnect $network_manager_home_profile
+  $sudo $network_manager $network_manager_disconnect $network_manager_home_profile
 }
 
 connect_home() {
   printf '%s\n' "Connecting to home (profile: $network_manager_home_profile)"
-  $network_manager $network_manager_connect $network_manager_home_profile
+  $sudo $network_manager $network_manager_connect $network_manager_home_profile
 }
 
 disconnect_work() {
   printf '%s\n' "Disconnecting from work (profile: $network_manager_work_profile)"
-  $network_manager $network_manager_disconnect $network_manager_work_profile
+  $sudo $network_manager $network_manager_disconnect $network_manager_work_profile
 }
 
 connect_work() {
   printf '%s\n' "Connecting to work (profile: $network_manager_work_profile)"
-  $network_manager $network_manager_connect $network_manager_work_profile
+  $sudo $network_manager $network_manager_connect $network_manager_work_profile
 }
 
 connect() {
   printf '%s\n' "Connecting to $1"
-  $network_manager $network_manager_connect $1
+  $sudo $network_manager $network_manager_connect $1
 }
 
 # safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
 set_adapter_down() {
-  ip link set $wireless_adapter down
+  $sudo ip link set $wireless_adapter down
 }
 
 print_adapter_status() {
@@ -50,9 +47,9 @@ replace_password() {
   perl -pi -e "s/(?<=Key=).*$/$2/" $1
 }
 
-# call function with two args; concatenation of $network_manager_location and $1, followed by $2
+# call function with two args; concatenation of $network_manager_location and profile as $1, followed by password as $2
 change_profile_password() {
-  replace_password $network_manager_location$1 $2
+  $sudo replace_password $network_manager_location$1 $2
 }
 
 wait_for_network() {
