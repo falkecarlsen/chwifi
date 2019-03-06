@@ -5,16 +5,38 @@ Through scripting CAS-login, downloading currently available four passwords, cac
 
 Note that this script has been developed specifically for use at Aalborg University's campuses but should be easily adaptable to other CAS-like authentication systems.
 
+## Configuration
+All configuration is located in the `config` file. Note that most can be left to defaults. 
+
+For `chwifi` to automatically cache passwords, edit `config` with appropriate credentials:
+```shell
+# Credentials for CAS-authentication system.
+USERNAME="username"
+PASSWORD="password"
+```
+
+System specific settings for network manager and wireless adapter follows. Adjust according to system configuration. Default is `wlp3s0` for network adapter and `netctl` as network manager and assumes profiles named 'home' and 'work'.
+```shell
+wireless_adapter="wlp3s0"
+network_manager="netctl"
+network_manager_location="/etc/netctl/"
+network_manager_connect="start"
+network_manager_disconnect="stop"
+network_manager_home_profile="home"
+network_manager_work_profile="work"
+```
+
+Settings for `passwordhandler.sh`, edit if other CAS-destination or temp-filenames are desired 
+```shell
+dest="https://wifipassword.aau.dk/oneday"
+password_html_file="passwords.html"
+password_file="passwords"
+```
+
 ## Usage
 To connect to home, pass no arguments:
 ```shell
 ./chwifi
-```
-
-For `chwifi` to automatically cache passwords, edit `credentials.txt` with appropriate credentials:
-```shell
-USERNAME="username"
-PASSWORD="password"
 ```
 
 To connect to work with cached password, pass `work`:
