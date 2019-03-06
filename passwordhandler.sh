@@ -6,15 +6,19 @@ PASSWORD_HTML_FILE="oneday.html"
 PASSWORD_FILE="passwords.txt"
 DATE=$(date +%d/%m/%Y)
 
-updatepasswords() {
+extract_password_table() {
+    xmllint --html --xpath "//table/tr/*" $1 | perl -pe "s/<th>//g" | perl -pe "s/<\/th>//g" | perl -pe "s/<td>//g" | perl -pe "s/<\/td>//g"
+}
+
+update_passwords() {
     source credentials.txt
     printf '%s\n' "Sourced credentials with username: $USERNAME"
     source cas-get.sh $DEST $USERNAME $PASSWORD > $PASSWORD_HTML_FILE
-    source extractpasswd.sh $PASSWORD_HTML_FILE > $PASSWORD_FILE
-    printf '%s\n' "Fetched, extracted updated passwords to $PASSWORD_FILE"
+    extract_password_table $PASSWORD_HTML_FILE > $PASSWORD_FILE
+    printf '%s\n' "Fetched and extracted updated passwords to $PASSWORD_FILE"
 }
 
-function getcurrentpassword() {
+get_daily_password() {
     # if file does not exist, then return error
     if [[ ! -f $PASSWORD_FILE ]]; then
         return 1
