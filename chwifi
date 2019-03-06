@@ -4,8 +4,8 @@
 # debug-flag, '-' signifying debug-mode
 set +x
 
-# source helper-script for calling getcurrentpassword-function
-source getpasswords.sh
+# source helper-script for calling getcurrentpassword and updatepasswords-function
+source passwordhandler.sh
 
 wireless_adapter="wlp3s0"
 netctl_location="/etc/netctl/"
@@ -106,27 +106,30 @@ elif [[ $# -eq 1 ]]; then
   # if aau, then find password, connect and update cached passwords when connection is given
   if [[ "$1" =~ aau ]]; then
     printf '%s\n' "AAU-keyword found, checking for cached password"
-    # grab current password from helper
-    current_password=$(getcurrentpassword)
+    # grab daily password from helper
+    daily_password=$(get_daily_password)
 
     # if no cached password, prompt for password
-    #if [[ -z "$current_password" ]]; then
     if [[ $? -eq 1 ]]; then
         printf '%s' "No cached password found, input password manually: "
-        read current_password
+        read daily_password
     else
         # print daily password, if found
-        printf '%s\n' "Daily AAU-1-DAY password is: $current_password"
+        printf '%s\n' "Daily AAU-1-DAY password is: $daily_password"
     fi
+
+    # perform connection routine
     disconnect_home
     set_adapter_down
-    change_password_aau $current_password
+    change_password_aau $daily_password
     connect_work
+
     # call function to update passwords once connection is established
     printf '%s\n' "Waiting for network connection..."
     wait_for_network
     printf '%s\n' "Network connection established, updating cached passwords"
-    updatepasswords
+    update_passwords
+
   # if alpha, num, alpha regex, then 1day password
   elif [[ "$1" =~ ^[a-z]+[0-9]+[a-z]+$ ]]; then
     printf '%s\n' "Connecting to AAU-1-DAY with password: $1"
@@ -134,15 +137,17 @@ elif [[ $# -eq 1 ]]; then
     set_adapter_down
     change_password_aau $1
     connect_work
-    print_adapter_status
-    # TODO: when at work, update passwdlist
-    update
+ 
+    # call function to update passwords once connection is established
+    printf '%s\n' "Waiting for network connection..."
+    wait_for_network
+    printf '%s\n' "Network connection established, updating cached passwords"
+    update_passwords
   else
     printf '%s\n' "This doesn't seem to be an AAU-1-DAY password, please check"
   fi
 elif [[ $# -eq 2 ]]; then
-  # TODO; check if profile exists, if not, create profile and start
-  printf '%s\n' "Received SSID: $1 and password: $2"
+  # TODO; check if profile exists for given SSID, if not, create profile and start with given password
+  printf '%s\n' "Received SSID: $1 and password: $2. Feature not yet implemented, exiting..."
+  exit 1
 fi
-
-exit 0
