@@ -11,8 +11,8 @@ All configuration is located in the `config` file. Note that most can be left to
 For `chwifi` to automatically cache passwords, edit `config` with appropriate credentials:
 ```shell
 # Credentials for CAS-authentication system.
-USERNAME="username"
-PASSWORD="password"
+username="username"
+password="password"
 ```
 
 System specific settings for network manager and wireless adapter follows. Adjust according to system configuration. Default is `wlp3s0` for network adapter and `netctl` as network manager and assumes profiles named 'home' and 'work'.
