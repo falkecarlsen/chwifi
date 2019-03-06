@@ -26,11 +26,23 @@ network_manager_home_profile="home"
 network_manager_work_profile="work"
 ```
 
-Settings for `passwordhandler.sh`, edit if other CAS-destination or temp-filenames are desired 
+Settings for `passwordhandler.sh`, edit if other CAS-destination or temp-filenames are desired.
 ```shell
 dest="https://wifipassword.aau.dk/oneday"
 password_html_file="passwords.html"
 password_file="passwords"
+```
+
+Host to ping for network connection test. Sensible to set to organisations homepage, since if network is restricted to organisation's local network and password-portal is still available, update of local cache is still possible during outage of public network access.
+```shell
+network_up_host="aau.dk"
+```
+
+> If required for specific use-case, a config-option is available to disable internal sudo-prefix to priviledged commands. This is **not advised**.
+
+Set internal `sudo` for priviledged commands. Defaults to true. Set `sudo` for true, and null for false, e.g.; `sudo=""`.
+```
+sudo="sudo"
 ```
 
 ## Usage
@@ -49,11 +61,18 @@ To manually enter new, daily password for work-profile, pass a single argument o
 ./chwifi foo42bar
 ```
 
-> To avoid typing your `sudo` password multiple times, you *can* run the script with `sudo`, and the script should operate nicely, but you do so at your own risk.
-
-To run whole script as `sudo`, removing the need to type your password multiple times, form script-call as:
+## Example
 ```shell
-sudo ./chwifi args
+user@hostname ~> ./chwifi
+No arguments, connecting to home
+Disconnecting from work (profile: work)
+[sudo] password for user:
+Connecting to home (profile: home)
+Waiting for network connection...
+Connection took: 6.382s
+Network connection established, updating cached passwords
+Sourced credentials with username: username
+Fetched and extracted updated passwords to 'passwords'
 ```
 
 ## Dependencies
