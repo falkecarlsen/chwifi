@@ -4,6 +4,7 @@
 DEST="https://wifipassword.aau.dk/oneday"
 PASSWORD_HTML_FILE="oneday.html"
 PASSWORD_FILE="passwords.txt"
+CREDENTIALS_FILE="credentials.txt"
 DATE=$(date +%d/%m/%Y)
 
 extract_password_table() {
@@ -11,7 +12,7 @@ extract_password_table() {
 }
 
 update_passwords() {
-    source credentials.txt
+    source $CREDENTIALS_FILE
     printf '%s\n' "Sourced credentials with username: $USERNAME"
     source cas-get.sh $DEST $USERNAME $PASSWORD > $PASSWORD_HTML_FILE
     extract_password_table $PASSWORD_HTML_FILE > $PASSWORD_FILE
