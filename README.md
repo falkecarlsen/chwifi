@@ -1,9 +1,9 @@
 # rolling-netctl-manager
-This script aims to ease workday mornings and afternoons by facilitating easy netctl-profile passphrase changes and profile switcing. 
+This script eases network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. 
 
-Through scripting CAS-login, downloading currently available four passwords, caching them locally, and matching daily password with given date, automatic `netctl`-profile configuration is achieved for following three days. If `chwifi` has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration.
+Through scripting CAS-login, downloading currently available four passwords, caching them locally, and matching daily password with given date, automatic network-manager profile configuration is achieved for following three days. If `chwifi` has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration.
 
-Note that this script has been developed specifically for use at AAU's campuses but should be easily adaptable to other CAS-like authentication systems.
+Note that this script has been developed specifically for use at Aalborg University's campuses but should be easily adaptable to other CAS-like authentication systems.
 
 ## Usage
 To connect to home, pass no arguments:
