@@ -78,15 +78,18 @@ Fetched and extracted updated passwords to 'passwords'
 ## Dependencies
 Following lists dependencies with most recently tested version of commands appended to name
 - `bash` `GNU bash, version 5.0.0(1)-release` required to run script
+- `sudo` `v1.8.27` required to execute priviledged commands
+- `netctl` `v1.20` or other network manager that takes arguments of the form `network_manager` `operation` `profile`
 - `ip` `Linux v4.20.13-arch1-1-ARCH` required for resetting adapter between operations
 - `date` `v8.30` required for matching valid date of password with given date, and measuring connection times
-- `netctl` `v1.20` or other network manager that takes arguments of the form `network_manager` `operation` `profile`
 - `perl` `rev5 v28 subv1` required for regex search and replace
 - `curl` `v7.64.0` required for accessing CAS-secured password-list and testing for network connection
 - `libxml` `v1.8.17-1` supplies `xmllint` which is required for parsing resulting password-page html
 
 ## Todo
-- [X] Allow using other network managers. Implemented, as long as they follow a `command` `operation` `profile` structure.
-- [ ] Implement a way to portably cache or reuse `sudo` session for `netctl` operations
-- [ ] Relax matching of parameters to manual input of password to allow for non-AAU use-cases
+- [ ] Support all profile cases
+    - [ ] Specifying an existing profile as parameter should switch to it
+    - [ ] Implement marking of profiles subject to a rolling-password model
+    - [ ] Specifying an SSID and password should create a new profile, optionally with a rolling-password flag
+- [ ] Relax matching of parameters to manual input of password to allow for non-AAU use-cases. Optionally abstract to config-option
 - [ ] Relinquish control of prompt upon connection, but still execute network-wait- and password-update-routine 
