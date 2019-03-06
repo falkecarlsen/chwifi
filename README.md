@@ -1,4 +1,4 @@
-# rolling-netctl-manager
+# chwifi
 This script eases network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. 
 
 Through scripting CAS-login, downloading currently available four passwords, caching them locally, and matching daily password with given date, automatic network-manager profile configuration is achieved for following three days. If `chwifi` has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration.
