@@ -8,35 +8,38 @@ set +x
 source passwordhandler.sh
 
 wireless_adapter="wlp3s0"
-netctl_location="/etc/netctl/"
-netctl_home_profile="home"
-netctl_work_profile="aau"
 network_up_host="aau.dk"
+network_manager="netctl"
+network_manager_location="/etc/netctl/"
+network_manager_connect="start"
+network_manager_disconnect="stop"
+network_manager_home_profile="home"
+network_manager_work_profile="aau"
 
 # quick functions for home/work actions on network manager
 disconnect_home() {
-  printf '%s\n' "Disconnecting from home (profile: $netctl_home_profile)"
-  netctl stop $netctl_home_profile
+  printf '%s\n' "Disconnecting from home (profile: $network_manager_home_profile)"
+  $network_manager $network_manager_disconnect $network_manager_home_profile
 }
 
 connect_home() {
-  printf '%s\n' "Connecting to home (profile: $netctl_home_profile)"
-  netctl start $netctl_home_profile
+  printf '%s\n' "Connecting to home (profile: $network_manager_home_profile)"
+  $network_manager $network_manager_connect $network_manager_home_profile
 }
 
 disconnect_work() {
-  printf '%s\n' "Disconnecting from work (profile: $netctl_work_profile)"
-  netctl stop $netctl_work_profile
+  printf '%s\n' "Disconnecting from work (profile: $network_manager_work_profile)"
+  $network_manager $network_manager_disconnect $network_manager_work_profile
 }
 
 connect_work() {
-  printf '%s\n' "Connecting to work (profile: $netctl_work_profile)"
-  netctl start $netctl_work_profile
+  printf '%s\n' "Connecting to work (profile: $network_manager_work_profile)"
+  $network_manager $network_manager_connect $network_manager_work_profile
 }
 
 connect() {
   printf '%s\n' "Connecting to $1"
-  netctl start $1
+  $network_manager $network_manager_connect $1
 }
 
 # safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
@@ -48,59 +51,39 @@ print_adapter_status() {
   ip link | grep $wireless_adapter
 }
 
-# perl regex; find "Key=" and replace all chars after, on given line, with
-# parameter $2, do this on file at $1
+# perl regex; find "Key=" and replace all chars after, on given line, with parameter $2, do this on file at $1
 replace_password() {
   perl -pi -e "s/(?<=Key=).*$/$2/" $1
 }
 
-# call function with two args; concatenation of $netctl_loc and $1, and $2
+# call function with two args; concatenation of $network_manager_location and $1, followed by $2
 change_profile_password() {
-  replace_password $netctl_location$1 $2
-}
-
-# prompt if user wants to change password
-change_password_prompt() {
-  read -p "Do you want to change the given password? (y/n) " yn
-  if [ "$yn" != "${yn#[Yy]}" ]; then
-    # read profile and password in
-    read -p "What password do you want to substitute with? " password
-    change_profile_password $1 $password
-  else
-    # connect with first argument, which must be profile
-    # TODO; test this
-    connect $1
-  fi
-}
-
-change_password_aau() {
-  # quick and dirty 1DAY-profile
-  change_profile_password "aau" $1
+  replace_password $network_manager_location$1 $2
 }
 
 wait_for_network() {
+    connection_start_time=$(date +%s.%N)
     until $(curl --output /dev/null --silent --head --fail --connect-timeout 1 $network_up_host); do
-        printf '%s\n' "Waiting for connection..."
+        sleep 0.25s
     done
+    connection_stop_time=$(date +%s.%N) 
+    printf '%s %.3fs\n' "Connection took:" "$(bc <<< "$connection_stop_time - $connection_start_time")"
 }
 
-# set verbosity and shift params down 
-#if [[ "-v" == "$1" ]]; then
-#  VERBOSE=1
-#  shift
-#fi
-
-# overload echo-function to use builtin echo if verbosity is set high
-#echo () {
-#  [[ "$VERBOSE" ]] && builtin echo $@
-#}
+update_routine() {
+    printf '%s\n' "Waiting for network connection..."
+    wait_for_network
+    printf '%s\n' "Network connection established, updating cached passwords"
+    update_passwords
+}
 
 if [[ $# -eq 0 ]] ; then
   printf '%s\n' "No arguments, connecting to home"
   disconnect_work
   set_adapter_down
   connect_home
-  print_adapter_status
+  update_routine
+
 elif [[ $# -eq 1 ]]; then
 
   # if aau, then find password, connect and update cached passwords when connection is given
@@ -121,28 +104,18 @@ elif [[ $# -eq 1 ]]; then
     # perform connection routine
     disconnect_home
     set_adapter_down
-    change_password_aau $daily_password
+    change_profile_password $network_manager_work_profile $daily_password    
     connect_work
-
-    # call function to update passwords once connection is established
-    printf '%s\n' "Waiting for network connection..."
-    wait_for_network
-    printf '%s\n' "Network connection established, updating cached passwords"
-    update_passwords
+    update_routine
 
   # if alpha, num, alpha regex, then 1day password
   elif [[ "$1" =~ ^[a-z]+[0-9]+[a-z]+$ ]]; then
     printf '%s\n' "Connecting to AAU-1-DAY with password: $1"
     disconnect_home
     set_adapter_down
-    change_password_aau $1
+    change_profile_password $network_manager_work_profile $daily_password    
     connect_work
- 
-    # call function to update passwords once connection is established
-    printf '%s\n' "Waiting for network connection..."
-    wait_for_network
-    printf '%s\n' "Network connection established, updating cached passwords"
-    update_passwords
+    update_routine 
   else
     printf '%s\n' "This doesn't seem to be an AAU-1-DAY password, please check"
   fi
