@@ -7,14 +7,8 @@ set +x
 # source helper-script for calling getcurrentpassword and updatepasswords-function
 source passwordhandler.sh
 
-wireless_adapter="wlp3s0"
-network_up_host="aau.dk"
-network_manager="netctl"
-network_manager_location="/etc/netctl/"
-network_manager_connect="start"
-network_manager_disconnect="stop"
-network_manager_home_profile="home"
-network_manager_work_profile="aau"
+# source config for user-specific variables
+source config
 
 # quick functions for home/work actions on network manager
 disconnect_home() {
@@ -87,7 +81,7 @@ if [[ $# -eq 0 ]] ; then
 elif [[ $# -eq 1 ]]; then
 
   # if aau, then find password, connect and update cached passwords when connection is given
-  if [[ "$1" =~ aau ]]; then
+  if [[ "$1" =~ work ]]; then
     printf '%s\n' "AAU-keyword found, checking for cached password"
     # grab daily password from helper
     daily_password=$(get_daily_password)
@@ -119,8 +113,4 @@ elif [[ $# -eq 1 ]]; then
   else
     printf '%s\n' "This doesn't seem to be an AAU-1-DAY password, please check"
   fi
-elif [[ $# -eq 2 ]]; then
-  # TODO; check if profile exists for given SSID, if not, create profile and start with given password
-  printf '%s\n' "Received SSID: $1 and password: $2. Feature not yet implemented, exiting..."
-  exit 1
 fi
