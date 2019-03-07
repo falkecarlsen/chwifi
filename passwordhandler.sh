@@ -13,7 +13,7 @@ extract_password_table() {
 
 update_passwords() {
     printf '%s\n' "Sourced credentials with username: $username"
-    source cas-get.sh $dest $username $password > $password_html_file
+    source cashandler.sh $dest $username $password > $password_html_file
     extract_password_table $password_html_file > $password_file
     printf '%s\n' "Fetched and extracted updated passwords to '$password_file'"
 }
