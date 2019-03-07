@@ -9,47 +9,48 @@ source config
 
 # quick functions for home/work actions on network manager
 disconnect_home() {
-  printf '%s\n' "Disconnecting from home (profile: $network_manager_home_profile)"
-  $sudo $network_manager $network_manager_disconnect $network_manager_home_profile
+    printf '%s\n' "Disconnecting from home (profile: $network_manager_home_profile)"
+    $sudo $network_manager $network_manager_disconnect $network_manager_home_profile
 }
 
 connect_home() {
-  printf '%s\n' "Connecting to home (profile: $network_manager_home_profile)"
-  $sudo $network_manager $network_manager_connect $network_manager_home_profile
+    printf '%s\n' "Connecting to home (profile: $network_manager_home_profile)"
+    $sudo $network_manager $network_manager_connect $network_manager_home_profile
 }
 
 disconnect_work() {
-  printf '%s\n' "Disconnecting from work (profile: $network_manager_work_profile)"
-  $sudo $network_manager $network_manager_disconnect $network_manager_work_profile
+    printf '%s\n' "Disconnecting from work (profile: $network_manager_work_profile)"
+    $sudo $network_manager $network_manager_disconnect $network_manager_work_profile
 }
 
 connect_work() {
-  printf '%s\n' "Connecting to work (profile: $network_manager_work_profile)"
-  $sudo $network_manager $network_manager_connect $network_manager_work_profile
+    printf '%s\n' "Connecting to work (profile: $network_manager_work_profile)"
+    $sudo $network_manager $network_manager_connect $network_manager_work_profile
 }
 
 connect() {
-  printf '%s\n' "Connecting to $1"
-  $sudo $network_manager $network_manager_connect $1
+    printf '%s\n' "Connecting to $1"
+    $sudo $network_manager $network_manager_connect $1
 }
 
 # safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
 set_adapter_down() {
-  $sudo ip link set $wireless_adapter down
+    $sudo ip link set $wireless_adapter down
 }
 
 print_adapter_status() {
-  ip link | grep $wireless_adapter
+    ip link | grep $wireless_adapter
 }
 
 # perl regex; find "Key=" and replace all chars after, on given line, with parameter $2, do this on file at $1
 replace_password() {
-  perl -pi -e "s/(?<=Key=).*$/$2/" $1
+    $sudo perl -pi -e "s/(?<=Key=).*$/$2/" $1
 }
 
 # call function with two args; concatenation of $network_manager_location and profile as $1, followed by password as $2
 change_profile_password() {
-  $sudo replace_password $network_manager_location$1 $2
+    printf '%s\n' "$network_manager_location$1 $2"
+    replace_password $network_manager_location$1 $2
 }
 
 wait_for_network() {
@@ -69,45 +70,45 @@ update_routine() {
 }
 
 if [[ $# -eq 0 ]] ; then
-  printf '%s\n' "No arguments, connecting to home"
-  disconnect_work
-  set_adapter_down
-  connect_home
-  update_routine
+    printf '%s\n' "No arguments, connecting to home"
+    disconnect_work
+    set_adapter_down
+    connect_home
+    update_routine
 
 elif [[ $# -eq 1 ]]; then
 
-  # if aau, then find password, connect and update cached passwords when connection is given
-  if [[ "$1" =~ work ]]; then
-    printf '%s\n' "AAU-keyword found, checking for cached password"
-    # grab daily password from helper
-    daily_password=$(get_daily_password)
+    # if aau, then find password, connect and update cached passwords when connection is given
+    if [[ "$1" =~ work ]]; then
+        printf '%s\n' "AAU-keyword found, checking for cached password"
+        # grab daily password from helper
+        daily_password=$(get_daily_password)
 
-    # if no cached password, prompt for password
-    if [[ $? -eq 1 ]]; then
-        printf '%s' "No cached password found, input password manually: "
-        read daily_password
+        # if no cached password, prompt for password
+        if [[ $? -eq 1 ]]; then
+            printf '%s' "No cached password found, input password manually: "
+            read daily_password
+        else
+            # print daily password, if found
+            printf '%s\n' "Daily AAU-1-DAY password is: $daily_password"
+        fi
+
+        # perform connection routine
+        disconnect_home
+        set_adapter_down
+        change_profile_password $network_manager_work_profile $daily_password    
+        connect_work
+        update_routine
+
+    # if alpha, num, alpha regex, then 1day password
+    elif [[ "$1" =~ ^[a-z]+[0-9]+[a-z]+$ ]]; then
+        printf '%s\n' "Connecting to AAU-1-DAY with password: $1"
+        disconnect_home
+        set_adapter_down
+        change_profile_password $network_manager_work_profile $daily_password    
+        connect_work
+        update_routine 
     else
-        # print daily password, if found
-        printf '%s\n' "Daily AAU-1-DAY password is: $daily_password"
+        printf '%s\n' "This doesn't seem to be an AAU-1-DAY password, please check"
     fi
-
-    # perform connection routine
-    disconnect_home
-    set_adapter_down
-    change_profile_password $network_manager_work_profile $daily_password    
-    connect_work
-    update_routine
-
-  # if alpha, num, alpha regex, then 1day password
-  elif [[ "$1" =~ ^[a-z]+[0-9]+[a-z]+$ ]]; then
-    printf '%s\n' "Connecting to AAU-1-DAY with password: $1"
-    disconnect_home
-    set_adapter_down
-    change_profile_password $network_manager_work_profile $daily_password    
-    connect_work
-    update_routine 
-  else
-    printf '%s\n' "This doesn't seem to be an AAU-1-DAY password, please check"
-  fi
 fi
