@@ -87,10 +87,3 @@ Following lists dependencies with most recently tested version of commands appen
 - `curl` `v7.64.0` required for accessing CAS-secured password-list and testing for network connection
 - `libxml` `v1.8.17-1` supplies `xmllint` which is required for parsing resulting password-page html
 
-## Todo
-- [ ] Support all profile cases
-    - [ ] Specifying an existing profile as parameter should switch to it
-    - [ ] Implement marking of profiles subject to a rolling-password model
-    - [ ] Specifying an SSID and password should create a new profile, optionally with a rolling-password flag
-- [ ] Relax matching of parameters to manual input of password to allow for non-AAU use-cases. Optionally abstract to config
-- [ ] Relinquish control of prompt upon connection, but still execute network-wait- and password-update-routine 
