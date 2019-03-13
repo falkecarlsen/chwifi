@@ -49,7 +49,6 @@ replace_password() {
 
 # call function with two args; concatenation of $network_manager_location and profile as $1, followed by password as $2
 change_profile_password() {
-    printf '%s\n' "$network_manager_location$1 $2"
     replace_password $network_manager_location$1 $2
 }
 
