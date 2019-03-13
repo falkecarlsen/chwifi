@@ -100,7 +100,7 @@ elif [[ $# -eq 1 ]]; then
         update_routine
 
     # if alpha, num, alpha regex, then 1day password
-    elif [[ "$1" =~ ^[a-z]+[0-9]+[a-z]+$ ]]; then
+    elif [[ "$1" =~ $password_syntax ]]; then
         printf '%s\n' "Connecting to AAU-1-DAY with password: $1"
         disconnect_home
         set_adapter_down
