@@ -16,6 +16,11 @@ username="username"
 password="password"
 ```
 
+Rolling password syntax, set with a regex.
+```shell
+password_syntax="[a-z]+[0-9]+[a-z]+"
+```
+
 System specific settings for network manager and wireless adapter follows. Adjust according to system configuration. Default is `wlp3s0` for network adapter and `netctl` as network manager and assumes profiles named 'home' and 'work'.
 ```shell
 wireless_adapter="wlp3s0"
