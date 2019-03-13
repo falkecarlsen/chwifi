@@ -1,6 +1,10 @@
 #!/bin/bash
 # netctl managing script for easier workday mornings and afternoons
 
+# change to dir of script for sourcing
+path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+cd "$path"
+
 # source helper-script for calling getcurrentpassword and updatepasswords-function
 source passwordhandler.sh
 
