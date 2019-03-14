@@ -72,17 +72,29 @@ update_routine() {
     update_passwords
 }
 
-if [[ $# -eq 0 ]] ; then
-    printf '%s\n' "No arguments, connecting to home"
-    disconnect_work
-    set_adapter_down
-    connect_home
-    update_routine
+display_help() {
+    printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n\n"
+    printf "Usage: ./chwifi <profile>\n"
+    printf "Configuration of this script is done through the 'config' file, for documentation read README.md\n"
+    printf "Profiles:\n"
+    printf "\thome\n"
+    printf "\twork\n"
+}
 
+if [[ $# -eq 0 ]] ; then
+    display_help
 elif [[ $# -eq 1 ]]; then
 
-    # if aau, then find password, connect and update cached passwords when connection is given
-    if [[ "$1" =~ work ]]; then
+    # if home, then connect and update cached passwords when connection is given
+    if [[ "$1" =~ home ]]; then
+        printf '%s\n' "No arguments, connecting to home"
+        disconnect_work
+        set_adapter_down
+        connect_home
+        update_routine
+
+    # if work, then find password, connect and update cached passwords when connection is given
+    elif [[ "$1" =~ work ]]; then
         printf '%s\n' "AAU-keyword found, checking for cached password"
         # grab daily password from helper
         daily_password=$(get_daily_password)
