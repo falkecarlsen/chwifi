@@ -52,9 +52,9 @@ sudo="sudo"
 ```
 
 ## Usage
-To connect to home, pass no arguments.
+To connect to home, pass argument `home`.
 ```shell
-./chwifi
+./chwifi home
 ```
 
 To connect to work with cached password, pass argument `work`.
