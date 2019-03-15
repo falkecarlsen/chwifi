@@ -8,7 +8,7 @@ username="username"
 password="password"
 
 # Work password syntax, defined by regex. This can be set if your rolling password is different from default. 
-password_syntax="[a-z]+[0-9]+[a-z]+"
+password_syntax="^[a-z]+[0-9]+[a-z]+$"
 
 # Use internal sudo for priviledged commands, set "sudo" for true, "" for false. Priviledged commands; 'ip link set $adapter down' and '$network_manager stop $profile'
 sudo="sudo"

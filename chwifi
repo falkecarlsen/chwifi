@@ -81,13 +81,14 @@ display_help() {
     printf "\twork\n"
 }
 
+# if no-args, print help
 if [[ $# -eq 0 ]] ; then
     display_help
 elif [[ $# -eq 1 ]]; then
 
     # if home, then connect and update cached passwords when connection is given
     if [[ "$1" =~ home ]]; then
-        printf '%s\n' "No arguments, connecting to home"
+        printf '%s\n' "Home-keyword found, connecting to home"
         disconnect_work
         set_adapter_down
         connect_home
@@ -95,7 +96,7 @@ elif [[ $# -eq 1 ]]; then
 
     # if work, then find password, connect and update cached passwords when connection is given
     elif [[ "$1" =~ work ]]; then
-        printf '%s\n' "AAU-keyword found, checking for cached password"
+        printf '%s\n' "Work-keyword found, checking for cached password"
         # grab daily password from helper
         daily_password=$(get_daily_password)
 
@@ -105,7 +106,7 @@ elif [[ $# -eq 1 ]]; then
             read daily_password
         else
             # print daily password, if found
-            printf '%s\n' "Daily AAU-1-DAY password is: $daily_password"
+            printf '%s\n' "Daily work password is: $daily_password"
         fi
 
         # perform connection routine
@@ -115,15 +116,15 @@ elif [[ $# -eq 1 ]]; then
         connect_work
         update_routine
 
-    # if alpha, num, alpha regex, then 1day password
+    # if alpha, num, alpha regex, then work password
     elif [[ "$1" =~ $password_syntax ]]; then
-        printf '%s\n' "Connecting to AAU-1-DAY with password: $1"
+        printf '%s\n' "Connecting to work with given password: $1"
         disconnect_home
         set_adapter_down
         change_profile_password $network_manager_work_profile $daily_password    
         connect_work
         update_routine 
     else
-        printf '%s\n' "This doesn't seem to be an AAU-1-DAY password, please check"
+        printf '%s\n' "$1 doesn't seem to be an work password, please check"
     fi
 fi
