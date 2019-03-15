@@ -1,5 +1,5 @@
 # chwifi
-This tool automates network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. 
+This tool automates network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. Device-specific bytes of MAC-address are randomised during each connection routine. 
 
 Through scripting CAS-login, downloading currently available passwords, caching them locally, and matching daily password with given date, automatic network-manager profile configuration is achieved for following days specified by service. 
 In the case of Aalborg University; if `chwifi` has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration, thus ensuring no manual input for consecutive five-day workweeks.
@@ -30,6 +30,11 @@ network_manager_connect="start"
 network_manager_disconnect="stop"
 network_manager_home_profile="home"
 network_manager_work_profile="work"
+```
+
+Options for macchanger, `-e` is default, which randomises only device-specific bytes and retains vendor-information.
+```shell
+macchanger_options="-e"
 ```
 
 Settings for `passwordhandler.sh`, edit if other CAS-destination or temp-filenames are desired.
@@ -73,8 +78,9 @@ Example shows call from another directory, with work keyword, printing cached pa
 user@hostname ~> projects/chwifi/chwifi work
 Work-keyword found, checking for cached password
 Daily work password is: amount42wind
-Disconnecting from home (profile: home)
-Connecting to work (profile: work)
+Disconnecting from profile: home
+New MAC-address: 00:1a:e9:cb:55:ef 
+Connecting to profile: work
 Waiting for network connection...
 Connection took: 5.293s
 Network connection established, updating cached passwords
@@ -92,4 +98,5 @@ Following lists dependencies with most recently tested version of commands appen
 - `perl` `rev5 v28 subv1` required for regex search and replace
 - `curl` `v7.64.0` required for accessing CAS-secured password-list and testing for network connection
 - `libxml` `v1.8.17-1` supplies `xmllint` which is required for parsing resulting password-page html
+- `macchanger` `1.7.0` required for MAC-address spoofing
 
