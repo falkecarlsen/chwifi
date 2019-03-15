@@ -62,20 +62,21 @@ To connect to work with cached password, pass argument `work`.
 ./chwifi work
 ```
 
-To manually enter new, daily password for work-profile, pass a single argument of the form `[a-z]+[0-9]+[a-z]+`.
+To manually enter new, daily password for work-profile, pass a single argument of the form `^[a-z]+[0-9]+[a-z]+$`.
 ```shell
 ./chwifi foo42bar
 ```
 
 ## Example
+Example shows call from another directory, with work keyword, printing cached password, and username for fetching passwords.
 ```
-user@hostname ~> ./chwifi
-No arguments, connecting to home
-Disconnecting from work (profile: work)
-[sudo] password for user:
-Connecting to home (profile: home)
+user@hostname ~> projects/chwifi/chwifi work
+Work-keyword found, checking for cached password
+Daily work password is: amount42wind
+Disconnecting from home (profile: home)
+Connecting to work (profile: work)
 Waiting for network connection...
-Connection took: 6.382s
+Connection took: 5.293s
 Network connection established, updating cached passwords
 Sourced credentials with username: username
 Fetched and extracted updated passwords to 'passwords'
