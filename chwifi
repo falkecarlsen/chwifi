@@ -11,34 +11,13 @@ source passwordhandler.sh
 # source config for user-specific variables
 source config
 
-# quick functions for home/work actions on network manager
-disconnect_home() {
-    printf '%s\n' "Disconnecting from home (profile: $network_manager_home_profile)"
-    $sudo $network_manager $network_manager_disconnect $network_manager_home_profile
-}
-
-connect_home() {
-    printf '%s\n' "Connecting to home (profile: $network_manager_home_profile)"
-    $sudo $network_manager $network_manager_connect $network_manager_home_profile
-}
-
-disconnect_work() {
-    printf '%s\n' "Disconnecting from work (profile: $network_manager_work_profile)"
-    $sudo $network_manager $network_manager_disconnect $network_manager_work_profile
-}
-
-connect_work() {
-    printf '%s\n' "Connecting to work (profile: $network_manager_work_profile)"
-    $sudo $network_manager $network_manager_connect $network_manager_work_profile
-}
-
 connect() {
-    printf '%s\n' "Connecting to $1"
+    printf '%s\n' "Connecting to profile: $1"
     $sudo $network_manager $network_manager_connect $1
 }
 
 disconnect() {
-    printf '%s\n' "Disconnecting from profile $1"
+    printf '%s\n' "Disconnecting from profile: $1"
     $sudo $network_manager $network_manager_disconnect $1
 }
 # safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
@@ -53,10 +32,6 @@ connection_routine() {
     change_mac
     connect $2
     update_routine
-}
-
-print_adapter_status() {
-    ip link | grep $wireless_adapter
 }
 
 # perl regex; find "Key=" and replace all chars after, on given line, with parameter $2, do this on file at $1
