@@ -1,6 +1,7 @@
-# Configuration for chwifi. Note that this file contains your credentials in plaintext, be careful with whom and what you allow to read this file, no responsibility is taken by author for any issues, security or otherwise. Please refer to the README.md for further information and license information.
+# Configuration for chwifi. Note that this file contains your credentials in plaintext, be careful with whom and what you allow to read this file.
+# No responsibility is taken by author for any issues, security or otherwise. Please refer to the README.md for further information and license information.
 
-# Host to ping for network connection test. Set to organisations homepage, since if network is restricted to organisation's local network and password-portal is still available, update of local cache is still possible during outage of public network access.
+# Host to ping for network connection test. Set to work organisations homepage, since if network is restricted to organisation's local network and password-portal is still available,# update of local cache is still possible during outage of public network access.
 network_up_host="aau.dk"
 
 # Credentials for CAS-authentication system.
@@ -21,6 +22,9 @@ network_manager_connect="start"
 network_manager_disconnect="stop"
 network_manager_home_profile="home"
 network_manager_work_profile="work"
+
+# Options for macchanger, -e, which randomises only device-specific bytes 
+macchanger_options="-e"
 
 # Settings for passwordhandler, edit for other CAS-destination, if desired.
 dest="https://wifipassword.aau.dk/oneday"

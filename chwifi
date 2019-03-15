@@ -37,9 +37,22 @@ connect() {
     $sudo $network_manager $network_manager_connect $1
 }
 
+disconnect() {
+    printf '%s\n' "Disconnecting from profile $1"
+    $sudo $network_manager $network_manager_disconnect $1
+}
 # safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
 set_adapter_down() {
     $sudo ip link set $wireless_adapter down
+}
+
+# disconnect and connect routine, takes disconnect profile as first parameter, and connect profile as second
+connection_routine() {
+    disconnect $1
+    set_adapter_down
+    change_mac
+    connect $2
+    update_routine
 }
 
 print_adapter_status() {
@@ -72,6 +85,12 @@ update_routine() {
     update_passwords
 }
 
+# change MAC-address according to sourced options and print new MAC-address
+change_mac() {
+    printf "New MAC-address: "
+    $sudo macchanger $macchanger_options $wireless_adapter | grep New | grep -o '\(\([0-9a-f]\{2\}\):\)\{5\}[0-9a-f]\{2\}'
+}
+
 display_help() {
     printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n\n"
     printf "Usage: ./chwifi <profile>\n"
@@ -89,11 +108,8 @@ elif [[ $# -eq 1 ]]; then
     # if home, then connect and update cached passwords when connection is given
     if [[ "$1" =~ home ]]; then
         printf '%s\n' "Home-keyword found, connecting to home"
-        disconnect_work
-        set_adapter_down
-        connect_home
-        update_routine
-
+        connection_routine $network_manager_work_profile $network_manager_home_profile
+        
     # if work, then find password, connect and update cached passwords when connection is given
     elif [[ "$1" =~ work ]]; then
         printf '%s\n' "Work-keyword found, checking for cached password"
@@ -108,22 +124,18 @@ elif [[ $# -eq 1 ]]; then
             # print daily password, if found
             printf '%s\n' "Daily work password is: $daily_password"
         fi
-
-        # perform connection routine
-        disconnect_home
-        set_adapter_down
+        
+        # change work profile password and do connection routine
         change_profile_password $network_manager_work_profile $daily_password    
-        connect_work
-        update_routine
+        connection_routine $network_manager_home_profile $network_manager_work_profile 
 
     # if alpha, num, alpha regex, then work password
     elif [[ "$1" =~ $password_syntax ]]; then
         printf '%s\n' "Connecting to work with given password: $1"
-        disconnect_home
-        set_adapter_down
+            
+        # change work profile password and do connection routine
         change_profile_password $network_manager_work_profile $daily_password    
-        connect_work
-        update_routine 
+        connection_routine $network_manager_home_profile $network_manager_work_profile 
     else
         printf '%s\n' "$1 doesn't seem to be an work password, please check"
     fi
