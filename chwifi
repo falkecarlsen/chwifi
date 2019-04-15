@@ -22,9 +22,15 @@ disconnect() {
 }
 
 stop_all() {
-    printf "Stopping all profiles"
+    printf "Stopping all profiles\n"
     $sudo $network_manager $network_manager_stopall
 }
+
+restart_profile() {
+    printf '%s\n' "Restarting profile: $1"
+    $sudo $network_manager $network_manager_restart $1
+}
+
 # safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
 set_adapter_down() {
     $sudo ip link set $wireless_adapter down
@@ -83,7 +89,7 @@ display_help() {
 # if no-args, print help
 if [[ $# -eq 0 ]] ; then
     display_help
-elif [[ $# -eq 1 ]]; then
+elif [[ $# -gt 0 ]]; then
 
     # if home, then connect and update cached passwords when connection is given
     if [[ "$1" =~ home ]]; then
@@ -116,6 +122,14 @@ elif [[ $# -eq 1 ]]; then
         # change work profile password and do connection routine
         change_profile_password $network_manager_work_profile $daily_password    
         connection_routine $network_manager_work_profile 
+
+    # if two arguments are given, process those
+    elif [[ $# -eq 2 ]]; then
+        
+        # if first argument is either '-r' or 'restart' then restart profile given as second argument
+        if [[ "$1" =~ -r ]] || [[ "$1" =~ restart ]]; then
+            restart_profile $2
+        fi
     else
         printf '%s\n' "$1 doesn't seem to be an work password, please check"
     fi
