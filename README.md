@@ -29,6 +29,7 @@ network_manager_location="/etc/netctl/"
 network_manager_connect="start"
 network_manager_disconnect="stop"
 network_manager_stopall="stop-all"
+network_manager_restart="restart"
 network_manager_home_profile="home"
 network_manager_work_profile="work"
 ```
