@@ -69,6 +69,12 @@ To connect to work with cached password, pass argument `work`.
 ./chwifi work
 ```
 
+To restart a given profile, pass either `-r` or `restart` followed by the profile-name.
+```shell
+./chwifi -r home
+./chwifi restart work
+```
+
 To manually enter new, daily password for work-profile, pass a single argument of the form `^[a-z]+[0-9]+[a-z]+$`.
 ```shell
 ./chwifi foo42bar
@@ -80,7 +86,7 @@ Example shows call from another directory, with work keyword, printing cached pa
 user@hostname ~> projects/chwifi/chwifi work
 Work-keyword found, checking for cached password
 Daily work password is: amount42wind
-Disconnecting from profile: home
+Stopping all profiles
 New MAC-address: 00:1a:e9:cb:55:ef 
 Connecting to profile: work
 Waiting for network connection...
