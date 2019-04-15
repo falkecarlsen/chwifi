@@ -20,14 +20,19 @@ disconnect() {
     printf '%s\n' "Disconnecting from profile: $1"
     $sudo $network_manager $network_manager_disconnect $1
 }
+
+stop_all() {
+    printf "Stopping all profiles"
+    $sudo $network_manager $network_manager_stopall
+}
 # safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
 set_adapter_down() {
     $sudo ip link set $wireless_adapter down
 }
 
-# disconnect and connect routine, takes disconnect profile as first parameter, and connect profile as second
+# disconnect and connect routine, stops all active profiles and takes connect profile as first parameter
 connection_routine() {
-    disconnect $1
+    stop_all
     set_adapter_down
     change_mac
     connect $2
@@ -83,7 +88,7 @@ elif [[ $# -eq 1 ]]; then
     # if home, then connect and update cached passwords when connection is given
     if [[ "$1" =~ home ]]; then
         printf '%s\n' "Home-keyword found, connecting to home"
-        connection_routine $network_manager_work_profile $network_manager_home_profile
+        connection_routine $network_manager_home_profile
         
     # if work, then find password, connect and update cached passwords when connection is given
     elif [[ "$1" =~ work ]]; then
@@ -102,7 +107,7 @@ elif [[ $# -eq 1 ]]; then
         
         # change work profile password and do connection routine
         change_profile_password $network_manager_work_profile $daily_password    
-        connection_routine $network_manager_home_profile $network_manager_work_profile 
+        connection_routine $network_manager_work_profile 
 
     # if alpha, num, alpha regex, then work password
     elif [[ "$1" =~ $password_syntax ]]; then
@@ -110,7 +115,7 @@ elif [[ $# -eq 1 ]]; then
             
         # change work profile password and do connection routine
         change_profile_password $network_manager_work_profile $daily_password    
-        connection_routine $network_manager_home_profile $network_manager_work_profile 
+        connection_routine $network_manager_work_profile 
     else
         printf '%s\n' "$1 doesn't seem to be an work password, please check"
     fi
