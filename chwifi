@@ -69,6 +69,11 @@ update_routine() {
     wait_for_network
     printf '%s\n' "Network connection established, updating cached passwords"
     update_passwords
+    if [[ $? -eq 0 ]]; then
+        printf "Successfully updated cached passwords"
+    else
+	printf "Failed to update cached passwords"
+    fi
 }
 
 # change MAC-address according to sourced options and print new MAC-address
