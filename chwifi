@@ -84,7 +84,7 @@ change_mac() {
 
 display_help() {
     printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n\n"
-    printf "Usage: ./chwifi <profile>\n"
+    printf "Usage: ./chwifi <-r | restart>? <profile>\n"
     printf "Configuration of this script is done through the 'config' file, for documentation read README.md\n"
     printf "Profiles:\n"
     printf "\thome\n"
