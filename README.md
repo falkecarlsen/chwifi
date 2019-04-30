@@ -93,7 +93,7 @@ Waiting for network connection...
 Connection took: 5.293s
 Network connection established, updating cached passwords
 Sourced credentials with username: username
-Fetched and extracted updated passwords to 'passwords'
+Successfully updated cached passwords
 ```
 
 ## Dependencies
