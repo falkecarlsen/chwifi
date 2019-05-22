@@ -69,6 +69,12 @@ To connect to work with cached password, pass argument `work`.
 ./chwifi work
 ```
 
+To show a specific password pass '-s' or 'show' followed by an index, e.g., where 1 is tomorrow's password. If no index is given, it defaults to today's password.
+```shell
+./chwifi -s 3
+./chwifi show
+```
+
 To restart a given profile, pass either `-r` or `restart` followed by the profile-name.
 ```shell
 ./chwifi -r home
