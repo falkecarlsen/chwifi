@@ -28,6 +28,22 @@ update_passwords() {
     fi
 }
 
+get_password() {
+    # Read in password-array from filesystem
+    readarray -t password_array < $password_file
+
+    # Calculate index
+    index=$(echo "2 + $1 * 2" | bc)
+
+    # Check for out of bounds index, else echo result
+    if [[ $index -lt 2 ]] || [[ $index -gt 8 ]]; then
+        exit 1
+    else
+        echo ${password_array[$index]}
+        return 0
+    fi
+}
+
 get_daily_password() {
     # If file does not exist, then return error
     if [[ ! -f $password_file ]]; then

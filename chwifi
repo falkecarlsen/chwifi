@@ -82,6 +82,18 @@ change_mac() {
     $sudo macchanger $macchanger_options $wireless_adapter | grep New | grep -o '\(\([0-9a-f]\{2\}\):\)\{5\}[0-9a-f]\{2\}'
 }
 
+display_daily_password() {
+    # Get password
+    password=$(get_password $1)
+
+    # If successful, return password, else print error-message 
+    if [[ $? -eq 0 ]]; then
+        printf "Daily work password is: $password\n"
+    else
+        printf "Password index: $1 is out of range. Cannot display password\n"
+    fi
+}
+
 display_help() {
     printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n\n"
     printf "Usage: ./chwifi <-r | restart>? <profile>\n"
@@ -128,14 +140,22 @@ elif [[ $# -gt 0 ]]; then
         change_profile_password $network_manager_work_profile $daily_password    
         connection_routine $network_manager_work_profile 
 
+    # If exactly one argument and it is either '-s' or 'show' 
+    elif [[ $# -eq 1 ]] && ( [[ "$1" =~ "-s" ]] || [[ "$1" =~ "show" ]] ); then
+        display_daily_password 0 
+    
     # If two arguments are given, process those
     elif [[ $# -eq 2 ]]; then
         
+        # If first argument is '-s' or 'show' print indexed, cached password
+        if [[ "$1" =~ "-s" ]] || [[ "$1" =~ "show" ]]; then
+            display_daily_password $2
+
         # If first argument is either '-r' or 'restart' then restart profile given as second argument
-        if [[ "$1" =~ -r ]] || [[ "$1" =~ restart ]]; then
+        elif [[ "$1" =~ "-r" ]] || [[ "$1" =~ "restart" ]]; then
             restart_profile $2
         fi
     else
-        printf '%s\n' "$1 doesn't seem to be an work password, please check"
+        printf "Command is not recognised. Please check your input"
     fi
 fi
