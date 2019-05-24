@@ -111,6 +111,6 @@ Following lists dependencies with most recently tested version of commands appen
 - `date` `v8.30` required for matching valid date of password with given date, and measuring connection times
 - `perl` `rev5 v28 subv1` required for regex search and replace
 - `curl` `v7.64.0` required for accessing CAS-secured password-list and testing for network connection
-- `libxml` `v1.8.17-1` supplies `xmllint` which is required for parsing resulting password-page html
+- `libxml2` `v2.9.9-2` supplies `xmllint` which is required for parsing resulting password-page html
 - `macchanger` `1.7.0` required for MAC-address spoofing
 
