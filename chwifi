@@ -8,8 +8,8 @@ cd "$path"
 # Source helper-script for calling getcurrentpassword and updatepasswords-function
 source passwordhandler.sh
 
-# Source config for user-specific variables
-source config
+# Source config for user-specific variables from /etc
+source /etc/chwifi/config
 
 connect() {
     printf '%s\n' "Connecting to profile: $1"
