@@ -31,6 +31,6 @@ macchanger_options="-e"
 
 # Settings for passwordhandler, edit for other CAS-destination, if desired.
 dest="https://wifipassword.aau.dk/oneday"
-password_html_file="passwords.html"
-password_file="passwords"
+password_html_file="/tmp/chwifi-passwords.html"
+password_file="/etc/chwifi/passwords"
 

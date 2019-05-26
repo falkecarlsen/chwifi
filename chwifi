@@ -1,15 +1,15 @@
 #!/bin/bash
 # netctl managing script for easier workday mornings and afternoons
 
-# Change to dir of script for sourcing
-path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+# Change to dir of script for sourcing, following symlinks by using realpath
+path=$(dirname $(realpath ${BASH_SOURCE[0]}))
 cd "$path"
 
 # Source helper-script for calling getcurrentpassword and updatepasswords-function
 source passwordhandler.sh
 
-# Source config for user-specific variables
-source config
+# Source config for user-specific variables from /etc
+source /etc/chwifi/config
 
 connect() {
     printf '%s\n' "Connecting to profile: $1"
