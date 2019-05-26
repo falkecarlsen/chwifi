@@ -5,6 +5,10 @@
 path=$(dirname $(realpath ${BASH_SOURCE[0]}))
 cd "$path"
 
+# Check for config or setup if necessary
+source setup.sh
+setup
+
 # Source helper-script for calling getcurrentpassword and updatepasswords-function
 source passwordhandler.sh
 
