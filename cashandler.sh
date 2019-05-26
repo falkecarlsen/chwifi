@@ -5,16 +5,9 @@
 # The service to be called
 dest="$1"
 
-# IP Addresses or hostnames are fine here, omit protocol specification
-cas_hostname=login.aau.dk
-
 # Authentication details. This script only supports username/password login, but curl can handle certificate login if required
 username=$2
 password=$3
-
-# Temporary files used by curl to store cookies and http headers
-cookie=.cookie
-header_dump=.headers
 
 # Remove previous temporary files with force to supress warnings on nonexistent files
 rm -f $cookie
