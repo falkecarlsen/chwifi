@@ -26,11 +26,16 @@ network_manager_restart="restart"
 network_manager_home_profile="home"
 network_manager_work_profile="work"
 
-# Options for macchanger, -e, which randomises only device-specific bytes 
+# Options for macchanger, -e, which randomises only device-specific bytes.
 macchanger_options="-e"
 
-# Settings for passwordhandler, edit for other CAS-destination, if desired.
+# Settings for passwordhandler, edit `dest` for other CAS-destination, if desired.
 dest="https://wifipassword.aau.dk/oneday"
 password_html_file="/tmp/chwifi-passwords.html"
 password_file="/etc/chwifi/passwords"
+
+# Settings for cashandler, temporary file locations are included.
+cas_hostname="login.aau.dk"
+cookie="/tmp/.chwifi-cookie"
+header_dump="/tmp/.chwifi-headers"
 

@@ -2,7 +2,7 @@
 # Handles fetching of passwords, extracting, writing to file, and returning current, daily password
 
 # Source config for user-variables
-source config
+source /etc/chwifi/config
 
 # Set current date locally
 date=$(date +%d/%m/%Y)
@@ -65,3 +65,4 @@ get_daily_password() {
     # Else return error
     return 1 
 }
+
