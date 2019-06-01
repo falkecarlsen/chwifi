@@ -1,3 +1,5 @@
+**Note that master is currently broken anticipating packaging for release on the AUR.** In the meantime, use the [latest releast](https://github.com/cogitantium/chwifi/releases) or the [last stable commit](https://github.com/cogitantium/chwifi/tree/e19c0baeb4b5fc68175fd532993a7df8b3755391) on master for the 'read-password'-functionality.
+
 # chwifi
 This tool automates network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. Device-specific bytes of MAC-address are randomised during each connection routine. 
 
