@@ -75,7 +75,8 @@ update_routine() {
     printf '%s\n' "Waiting for network connection..."
     wait_for_network
     printf '%s\n' "Network connection established, updating cached passwords" 
-    if [[ update_passwords -eq 0 ]]; then
+    update_passwords
+    if [[ $? -eq 0 ]]; then
         printf "Successfully updated cached passwords\n"
     else 
         printf "Failed to update cached passwords!\n"
