@@ -9,9 +9,8 @@ In the case of Aalborg University; if `chwifi` has been invoked within the previ
 Note that this script has been developed specifically for use at Aalborg University's campuses but should be easily adaptable to other CAS-like authentication systems.
 
 ## Configuration
-All configuration is located in the `config` file. Note that most can be left to defaults. 
+All configuration is located in the `config` file which is installed into the home config upon first run, after prompting the user for username and password. Note that most can be left to defaults but if changes are necessary, the config can be found at `$XDG_CONFIG_HOME/.config/chwifi/config`.
 
-For `chwifi` to automatically cache passwords, edit `config` with appropriate credentials.
 ```shell
 # Credentials for CAS-authentication system.
 username="username"
@@ -45,7 +44,7 @@ Settings for `passwordhandler.sh`, edit if other CAS-destination or temp-filenam
 ```shell
 dest="https://wifipassword.aau.dk/oneday"
 password_html_file="passwords.html"
-password_file="passwords"
+password_file="$XDG_HOME_CONFIG/passwords"
 ```
 
 Host to ping for network connection test. Sensible to set to organisations homepage, since if network is restricted to organisation's local network and password-portal is still available, update of local cache is still possible during outage of public network access.
@@ -91,7 +90,8 @@ To manually enter new, daily password for work-profile, pass a single argument o
 ## Example
 Example shows call from another directory, with work keyword, printing cached password, and username for fetching passwords.
 ```
-user@hostname ~> projects/chwifi/chwifi work
+user@hostname ~> chwifi work
+Using config found at /home/user/.config/chwifi/config
 Work-keyword found, checking for cached password
 Daily work password is: amount42wind
 Stopping all profiles

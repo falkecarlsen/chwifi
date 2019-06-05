@@ -24,7 +24,7 @@ setup() {
         read -r username
         printf "Note that password will be visible! Please input password:\n"
         read -r password
-        printf "Got username: %s, password: %s.\nCreating config at %s/config\n" "$username" "$password" "$config"
+        printf "Received username: %s, password: %s.\nCreating config at %s/config\n" "$username" "$password" "$config"
 
         # Copy config.sample into dir
         cp /usr/lib/chwifi/config.sample "$config/config"
@@ -33,5 +33,11 @@ setup() {
         sed -i "s/\"password\"$/\"$password\"/" "$config/config"
         # Regex config directory, using pipe for separator
         sed -i "s|\$XDG_CONFIG_HOME|$config|" "$config/config"
+        
+        if [ -f "$config/config" ]; then
+            printf "Successfully created config at: %s/config\n\n" "$config"
+        else
+            printf "Something went wrong during config-creation. Check error-messages above or submit an issue at:\nhttps://github.com/cogitantium/chwifi\n\n"
+        fi
     fi
 }
