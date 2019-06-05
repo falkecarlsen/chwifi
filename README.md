@@ -1,5 +1,3 @@
-**Note that master is currently broken anticipating packaging for release on the AUR.** In the meantime, use the [latest releast](https://github.com/cogitantium/chwifi/releases) or the [last stable commit](https://github.com/cogitantium/chwifi/tree/e19c0baeb4b5fc68175fd532993a7df8b3755391) on master for the 'read-password'-functionality.
-
 # chwifi
 This tool automates network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. Device-specific bytes of MAC-address are randomised during each connection routine. 
 
@@ -7,6 +5,31 @@ Through scripting CAS-login, downloading currently available passwords, caching 
 In the case of Aalborg University; if `chwifi` has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration, thus ensuring no manual input for consecutive five-day workweeks.
 
 Note that this script has been developed specifically for use at Aalborg University's campuses but should be easily adaptable to other CAS-like authentication systems.
+
+## Installation
+Installing `chwifi` through your package manager is advisable, currently `chwifi` is packaged for AUR and can easily be installed by an AUR-helper:
+
+```shell
+yay -S chwifi-git
+```
+
+Manual installation is possible, but requires some work. 
+
+```shell
+# Clone the repository and cd into it
+git clone https://github.com/cogitantium/chwifi.git
+cd chwifi
+
+# Make directory structure
+mkdir -p /usr/lib/chwifi
+mkdir -p /usr/bin
+
+# Install script to /usr/lib/chwifi
+install chwifi passwordhandler.sh cashandler.sh setup.sh config.sample -t /usr/lib/chwifi
+
+# Symlink script from /usr/lib to /usr/bin
+ln -s /usr/lib/chwifi/chwifi /usr/bin/chwifi
+```
 
 ## Configuration
 All configuration is located in the `config` file which is installed into the home config upon first run, after prompting the user for username and password. Note that most can be left to defaults but if changes are necessary, the config can be found at `$XDG_CONFIG_HOME/.config/chwifi/config`.
@@ -88,7 +111,7 @@ To manually enter new, daily password for work-profile, pass a single argument o
 ```
 
 ## Example
-Example shows call from another directory, with work keyword, printing cached password, and username for fetching passwords.
+Example shows script call, with work keyword, printing cached password, and username for fetching passwords.
 ```
 user@hostname ~> chwifi work
 Using config found at /home/user/.config/chwifi/config
