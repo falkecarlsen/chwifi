@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 # Setup script for chwifi
 
@@ -15,20 +15,23 @@ config_dir() {
 }
 
 setup() {
+    config="$(config_dir)"
     # Check for existence of config,
-    if [ -f "$( config_dir)/config" ]; then 
-        printf "Found config at $( config_dir)/config\n"
+    if [ -f "$config/config" ]; then 
+        printf "Found config at %s/config\n" "$( config_dir)"
     else
         printf "Configuration does not exist. Creating one now\nPlease input username/email:\n"
-        read username
+        read -r username
         printf "Note that password will be visible! Please input password:\n"
-        read password
-        printf "Got username: $username, password: $password.\nCreating config at $( config_dir )/config\n"
+        read -r password
+        printf "Got username: %s, password: %s.\nCreating config at %s/config\n" "$username" "$password" "$config"
 
         # Copy config.sample into dir
-        cp /usr/lib/chwifi/config.sample "$( config_dir )/config"
+        cp /usr/lib/chwifi/config.sample "$config/config"
         # Regex username and password into config
-        sed -i s/\"username\"$/\"$username\"/ "$( config_dir )/config"
-        sed -i s/\"password\"$/\"$password\"/ "$( config_dir )/config"
+        sed -i "s/\"username\"$/\"$username\"/" "$config/config"
+        sed -i "s/\"password\"$/\"$password\"/" "$config/config"
+        # Regex config directory, using pipe for separator
+        sed -i "s|\$XDG_CONFIG_HOME|$config|" "$config/config"
     fi
 }
