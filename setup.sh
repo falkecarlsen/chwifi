@@ -1,4 +1,4 @@
-#/bin/bash
+#!/bin/bash
 
 # Setup script for chwifi
 
@@ -17,18 +17,18 @@ config_dir() {
 setup() {
     # Check for existence of config,
     if [ -f "$( config_dir)/config" ]; then 
-        printf "Found config at $( config_dir)/config\n"
+        printf "Found config at %s/config\n" "$( config_dir)"
     else
         printf "Configuration does not exist. Creating one now\nPlease input username/email:\n"
-        read username
+        read -r username
         printf "Note that password will be visible! Please input password:\n"
-        read password
-        printf "Got username: $username, password: $password.\nCreating config at $( config_dir )/config\n"
+        read -r password
+        printf "Got username: %s, password: %s.\nCreating config at %s/config\n" "$username" "$password" "$( config_dir )"
 
         # Copy config.sample into dir
         cp /usr/lib/chwifi/config.sample "$( config_dir )/config"
         # Regex username and password into config
-        sed -i s/\"username\"$/\"$username\"/ "$( config_dir )/config"
-        sed -i s/\"password\"$/\"$password\"/ "$( config_dir )/config"
+        sed -i "s/\"username\"$/\"$username\"/" "$( config_dir )/config"
+        sed -i "s/\"password\"$/\"$password\"/" "$( config_dir )/config"
     fi
 }
