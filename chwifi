@@ -9,11 +9,14 @@ cd "$path"
 source setup.sh
 setup
 
-# Source helper-script for calling getcurrentpassword and updatepasswords-function
-source passwordhandler.sh
+# Export config-path for usage in passwordhandler and locally
+export config_path="$(config_dir)"
 
 # Source config for user-specific variables from /etc
-source /etc/chwifi/config
+source "$config_path/config"
+
+# Source helper-script for calling getcurrentpassword and updatepasswords-function
+source passwordhandler.sh
 
 connect() {
     printf '%s\n' "Connecting to profile: $1"

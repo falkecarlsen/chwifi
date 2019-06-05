@@ -2,7 +2,7 @@
 # Handles fetching of passwords, extracting, writing to file, and returning current, daily password
 
 # Source config for user-variables
-source /etc/chwifi/config
+source "$config_path/config"
 
 # Set current date locally
 date=$(date +%d/%m/%Y)
