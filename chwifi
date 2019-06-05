@@ -2,7 +2,7 @@
 # netctl managing script for easier workday mornings and afternoons
 
 # Change to dir of script for sourcing, following symlinks by using realpath
-path=$(dirname $(realpath ${BASH_SOURCE[0]}))
+path="$(dirname "$(realpath "${BASH_SOURCE[0]}")")"
 cd "$path"
 
 # Check for config or setup if necessary
@@ -19,28 +19,28 @@ source "$config_path/config"
 source passwordhandler.sh
 
 connect() {
-    printf '%s\n' "Connecting to profile: $1"
-    $sudo $network_manager $network_manager_connect $1
+    printf "Connecting to profile: %s\n" "$1"
+    "$sudo" "$network_manager" "$network_manager_connect" "$1"
 }
 
 disconnect() {
-    printf '%s\n' "Disconnecting from profile: $1"
-    $sudo $network_manager $network_manager_disconnect $1
+    printf "Disconnecting from profile: %s\n" "$1"
+    "$sudo" "$network_manager" "$network_manager_disconnect" "$1"
 }
 
 stop_all() {
     printf "Stopping all profiles\n"
-    $sudo $network_manager $network_manager_stopall
+    "$sudo" "$network_manager" "$network_manager_stopall"
 }
 
 restart_profile() {
-    printf '%s\n' "Restarting profile: $1"
-    $sudo $network_manager $network_manager_restart $1
+    printf "Restarting profile: %s\n" "$1"
+    "$sudo" "$network_manager" "$network_manager_restart" "$1"
 }
 
 # Safely kill adapter between profiles to ensure smooth dis- and connection, also print ip link status
 set_adapter_down() {
-    $sudo ip link set $wireless_adapter down
+    "$sudo" ip link set "$wireless_adapter" down
 }
 
 # Disconnect and connect routine, stops all active profiles and takes connect profile as first parameter
@@ -48,23 +48,23 @@ connection_routine() {
     stop_all
     set_adapter_down
     change_mac
-    connect $1
+    connect "$1"
     update_routine
 }
 
 # Perl regex; find "Key=" and replace all chars after, on given line, with parameter $2, do this on file at $1
 replace_password() {
-    $sudo perl -pi -e "s/(?<=Key=).*$/$2/" $1
+    "$sudo" perl -pi -e "s/(?<=Key=).*$/$2/" "$1"
 }
 
 # Call function with two args; concatenation of $network_manager_location and profile as $1, followed by password as $2
 change_profile_password() {
-    replace_password $network_manager_location$1 $2
+    replace_password "$network_manager_location""$1" "$2"
 }
 
 wait_for_network() {
     connection_start_time=$(date +%s.%N)
-    until $(curl --output /dev/null --silent --head --fail --connect-timeout 1 $network_up_host); do
+    until "$(curl --output /dev/null --silent --head --fail --connect-timeout 1 $network_up_host)"; do
         sleep 0.25s
     done
     connection_stop_time=$(date +%s.%N) 
@@ -74,30 +74,29 @@ wait_for_network() {
 update_routine() {
     printf '%s\n' "Waiting for network connection..."
     wait_for_network
-    printf '%s\n' "Network connection established, updating cached passwords"
-    update_passwords
-    if [[ $? -eq 0 ]]; then
+    printf '%s\n' "Network connection established, updating cached passwords" 
+    if [[ $(update_passwords) -eq 0 ]]; then
         printf "Successfully updated cached passwords\n"
     else 
-        printf "Failed to update cached passwords!"\n
+        printf "Failed to update cached passwords!\n"
     fi
 }
 
 # Change MAC-address according to sourced options and print new MAC-address
 change_mac() {
     printf "New MAC-address: "
-    $sudo macchanger $macchanger_options $wireless_adapter | grep New | grep -o '\(\([0-9a-f]\{2\}\):\)\{5\}[0-9a-f]\{2\}'
+    "$sudo" macchanger "$macchanger_options" "$wireless_adapter" | grep New | grep -o '\(\([0-9a-f]\{2\}\):\)\{5\}[0-9a-f]\{2\}'
 }
 
 display_daily_password() {
     # Get password
-    password=$(get_password $1)
+    password=$(get_password "$1")
 
     # If successful, return password, else print error-message 
     if [[ $? -eq 0 ]]; then
-        printf "Daily work password is: $password\n"
+        printf "Daily work password is: %s\n" "$password"
     else
-        printf "Password index: $1 is out of range. Cannot display password\n"
+        printf "Password index: %s is out of range. Cannot display password\n" "$1"
     fi
 }
 
@@ -118,7 +117,7 @@ elif [[ $# -gt 0 ]]; then
     # If home, then connect and update cached passwords when connection is given
     if [[ "$1" =~ home ]]; then
         printf '%s\n' "Home-keyword found, connecting to home"
-        connection_routine $network_manager_home_profile
+        connection_routine "$network_manager_home_profile"
         
     # If work, then find password, connect and update cached passwords when connection is given
     elif [[ "$1" =~ work ]]; then
@@ -129,23 +128,23 @@ elif [[ $# -gt 0 ]]; then
         # If no cached password, prompt for password
         if [[ $? -eq 1 ]]; then
             printf '%s' "No cached password found, input password manually: "
-            read daily_password
+            read -r daily_password
         else
             # Print daily password, if found
             printf '%s\n' "Daily work password is: $daily_password"
         fi
         
         # Change work profile password and do connection routine
-        change_profile_password $network_manager_work_profile $daily_password    
-        connection_routine $network_manager_work_profile 
+        change_profile_password "$network_manager_work_profile" "$daily_password"
+        connection_routine "$network_manager_work_profile" 
 
     # If alpha, num, alpha regex, then work password
     elif [[ "$1" =~ $password_syntax ]]; then
-        printf '%s\n' "Connecting to work with given password: $1"
+        printf "Connecting to work with given password: %s\n" "$1"
             
         # Change work profile password and do connection routine
-        change_profile_password $network_manager_work_profile $daily_password    
-        connection_routine $network_manager_work_profile 
+        change_profile_password "$network_manager_work_profile" "$daily_password"
+        connection_routine "$network_manager_work_profile" 
 
     # If exactly one argument and it is either '-s' or 'show' 
     elif [[ $# -eq 1 ]] && ( [[ "$1" =~ "-s" ]] || [[ "$1" =~ "show" ]] ); then
@@ -156,13 +155,13 @@ elif [[ $# -gt 0 ]]; then
         
         # If first argument is '-s' or 'show' print indexed, cached password
         if [[ "$1" =~ "-s" ]] || [[ "$1" =~ "show" ]]; then
-            display_daily_password $2
+            display_daily_password "$2"
 
         # If first argument is either '-r' or 'restart' then restart profile given as second argument
         elif [[ "$1" =~ "-r" ]] || [[ "$1" =~ "restart" ]]; then
-            restart_profile $2
+            restart_profile "$2"
         fi
     else
-        printf "Command is not recognised. Please check your input"
+        printf "Command is not recognised. Please check input"
     fi
 fi
