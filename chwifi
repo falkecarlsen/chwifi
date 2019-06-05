@@ -64,7 +64,7 @@ change_profile_password() {
 
 wait_for_network() {
     connection_start_time=$(date +%s.%N)
-    until "$(curl --output /dev/null --silent --head --fail --connect-timeout 1 $network_up_host)"; do
+    until $(curl --output /dev/null --silent --head --fail --connect-timeout 1 "$network_up_host"); do
         sleep 0.25s
     done
     connection_stop_time=$(date +%s.%N) 
@@ -162,6 +162,6 @@ elif [[ $# -gt 0 ]]; then
             restart_profile "$2"
         fi
     else
-        printf "Command is not recognised. Please check input"
+        printf "Command is not recognised. Please check input\n"
     fi
 fi
