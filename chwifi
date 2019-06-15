@@ -156,7 +156,27 @@ elif [[ $# -gt 0 ]]; then
         
         # If first argument is '-s' or 'show' print indexed, cached password
         if [[ "$1" =~ "-s" ]] || [[ "$1" =~ "show" ]]; then
-            display_daily_password "$2"
+            # If only letters are passed, then process those
+            if [[ "$2" =~ ^[[:alpha:]]+$ ]]; then
+                # Switch on argument and default to today
+                case "$2" in
+                    "today")
+                        display_daily_password 0
+                        ;;
+                    "tomorrow")
+                        display_daily_password 1
+                        ;;
+                    *)
+                        printf "Could not match: '%s' with a day, showing password for today\n" "$2"
+                        display_daily_password 0
+                        ;;
+                esac
+            # If argument is not alpha, but is consisting of digits, pass argument
+            elif [[ "$2" =~ ^[[:digit:]]+$ ]]; then 
+                display_daily_password "$2"
+            else
+                printf "Input: '%s' could not be parsed, please check" "$2"
+            fi
 
         # If first argument is either '-r' or 'restart' then restart profile given as second argument
         elif [[ "$1" =~ "-r" ]] || [[ "$1" =~ "restart" ]]; then
