@@ -23,7 +23,7 @@ setup() {
         printf "Configuration does not exist. Creating one now\nPlease input username/email:\n"
         read -r username
         printf "Note that password will be visible! Please input password:\n"
-        read -r password
+        read -r -s password
         printf "Received username: %s, password: %s.\nCreating config at %s/config\n" "$username" "$password" "$config"
 
         # Copy config.sample into dir
