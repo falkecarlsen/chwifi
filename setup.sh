@@ -17,9 +17,7 @@ config_dir() {
 setup() {
     config="$(config_dir)"
     # Check for existence of config,
-    if [ -f "$config/config" ]; then 
-        printf "Using config found at %s/config\n" "$config"
-    else
+    if [ ! -f "$config/config" ]; then 
         printf "Configuration does not exist. Creating one now\nPlease input username/email:\n"
         read -r username
         printf "Note that password will be visible! Please input password:\n"
