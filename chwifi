@@ -101,28 +101,15 @@ display_daily_password() {
     fi
 }
 
-display_help() {
-    printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n\n"
-    printf "Usage: ./chwifi <-r | -s | restart | show>? <profile | index?>\n"
-    printf "Configuration of this script is done through the 'config' file, for documentation read README.md\n"
-    printf "Profiles:\n"
-    printf "\thome\n"
-    printf "\twork\n"
-}
-
-# If no-args, print help
-if [[ $# -eq 0 ]] ; then
-    display_help
-elif [[ $# -gt 0 ]]; then
-
+connect_dispatch() {
     # If home, then connect and update cached passwords when connection is given
     if [[ "$1" =~ home ]]; then
-        printf '%s\n' "Home-keyword found, connecting to home"
+        printf '%s\n' "Connecting to home"
         connection_routine "$network_manager_home_profile"
         
     # If work, then find password, connect and update cached passwords when connection is given
     elif [[ "$1" =~ work ]]; then
-        printf '%s\n' "Work-keyword found, checking for cached password"
+        printf '%s\n' "Connecting to work, checking for cached password"
         # Grab daily password from helper
         daily_password=$(get_daily_password)
 
@@ -132,57 +119,116 @@ elif [[ $# -gt 0 ]]; then
             read -r daily_password
         else
             # Print daily password, if found
-            printf '%s\n' "Daily work password is: $daily_password"
+            printf '%s\n' "Found daily work password: $daily_password"
         fi
         
         # Change work profile password and do connection routine
         change_profile_password "$network_manager_work_profile" "$daily_password"
         connection_routine "$network_manager_work_profile" 
+    else
+        printf "An error occured while connecting to: '%s', please check" "$1"
+        exit 1
+    fi 
+}
 
-    # If alpha, num, alpha regex, then work password
-    elif [[ "$1" =~ $password_syntax ]]; then
-        printf "Connecting to work with given password: %s\n" "$1"
-            
-        # Change work profile password and do connection routine
-        change_profile_password "$network_manager_work_profile" "$daily_password"
-        connection_routine "$network_manager_work_profile" 
+display_help() {
+    printf "Usage: chwifi [OPTION]... <PROFILE>\n"
+    printf "Connect to home or work wireless networks, caching rolling passwords at work\n\n"
+    printf "Optional arguments:\n"
+    printf "  -s, show [index|today|tomorrow]\tdisplay the daily password of the given index or day\n"
+    printf "  -r, restart [profile]\t\t\trestarts the given profile\n"
+    printf "  -h, --help\t\t\t\tdisplay this help and exit\n\n"
+    printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n"
+    printf "Configuration of this script is done through the 'config' file, for documentation read README.md\n"
+}
 
-    # If exactly one argument and it is either '-s' or 'show' 
-    elif [[ $# -eq 1 ]] && ( [[ "$1" =~ "-s" ]] || [[ "$1" =~ "show" ]] ); then
-        display_daily_password 0 
-    
-    # If two arguments are given, process those
-    elif [[ $# -eq 2 ]]; then
-        
-        # If first argument is '-s' or 'show' print indexed, cached password
-        if [[ "$1" =~ "-s" ]] || [[ "$1" =~ "show" ]]; then
-            # If only letters are passed, then process those
-            if [[ "$2" =~ ^[[:alpha:]]+$ ]]; then
-                # Switch on argument and default to today
+# Save arguments
+args=$*
+
+# Parse all arguments
+while (( "$#" )); do
+    case "$1" in
+        -r|restart)
+            # Check if 'restart'-command argument exists and is all alphanumeric, otherwise register error
+            if [[ -n "$2" ]] && [[ "$2" =~ ^[[:alnum:]]+$ ]]; then
+                r_arg="$2"
+            else
+                err_input=1
+                break
+            fi
+            # Shift past argument and value
+            shift 2 
+            ;;
+        -s|show)
+            # Check if 'show'-command argument exists and is either all alphas or digits, otherwise register error
+            if [[ -n "$2" ]] && ([[ "$2" =~ ^[[:alpha:]]+$ ]] || [[ "$2" =~ ^[[:digit:]]+$ ]]); then
+                # Check for legal input or register error and break
                 case "$2" in
-                    "today")
-                        display_daily_password 0
+                    today)
+                        s_arg=0
+                        break
                         ;;
-                    "tomorrow")
-                        display_daily_password 1
+                    tomorrow)
+                        s_arg=1
+                        break
+                        ;;
+                    [[:digit:]])
+                        s_arg="$2"
+                        break
                         ;;
                     *)
-                        printf "Could not match: '%s' with a day, showing password for today\n" "$2"
-                        display_daily_password 0
+                        err_input=1
+                        break 2 # Break from outer case also, as error is found
                         ;;
                 esac
-            # If argument is not alpha, but is consisting of digits, pass argument
-            elif [[ "$2" =~ ^[[:digit:]]+$ ]]; then 
-                display_daily_password "$2"
-            else
-                printf "Input: '%s' could not be parsed, please check" "$2"
+            else # If argument is not legal register error and break
+                err_input=1
+                break
             fi
+            # Shift pass argument and value
+            shift 2
+            ;;
+        -h|--help)
+            # Print help and exit
+            display_help
+            exit 0
+            ;;
+        home|work) 
+            profile=$1
+            # Shift remaining arguments off stack
+            break
+            ;;
+        *)
+            # Unknown parameter, register error and break
+            err_input=1
+            break
+            ;;
+    esac
+done
 
-        # If first argument is either '-r' or 'restart' then restart profile given as second argument
-        elif [[ "$1" =~ "-r" ]] || [[ "$1" =~ "restart" ]]; then
-            restart_profile "$2"
-        fi
-    else
-        printf "Command is not recognised. Please check input\n"
-    fi
+eval set -- "$args"
+
+# Do error-checks first
+if [[ $# -eq 0 ]]; then
+    display_help
+    exit 0
+elif [[ -n $err_input ]]; then
+    printf "Could not parse given input: '%s', please check\n" "$*"
+    exit 1
+fi 
+
+# Show password if prompted
+if [[ -n $s_arg ]]; then
+    display_daily_password "$s_arg"
 fi
+
+# If connecting to profile, only do that and exit, else restart and exit
+if [[ -n $profile ]]; then 
+    connect_dispatch "$profile"
+    exit 0
+elif [[ -n $r_arg ]]; then
+    restart_profile "$r_arg"
+fi
+
+exit 0
+
