@@ -1,34 +1,79 @@
+<p align="center">
+  <img alt="GitHub release" src="https://img.shields.io/github/release/cogitantium/chwifi.svg">
+  <img alt="GitHub" src="https://img.shields.io/github/license/cogitantium/chwifi.svg">
+  <img alt="AUR votes" src="https://img.shields.io/aur/votes/chwifi-git.svg?label=AUR%20votes">
+  <img alt="GitHub last commit (master)" src="https://img.shields.io/github/last-commit/cogitantium/chwifi/master.svg?label=last%20update">
+</p>
+
 # chwifi
 This tool automates network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. Device-specific bytes of MAC-address are randomised during each connection routine. 
 
 Through scripting CAS-login, downloading currently available passwords, caching them locally, and matching daily password with given date, automatic network-manager profile configuration is achieved for following days specified by service. 
-In the case of Aalborg University; if `chwifi` has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration, thus ensuring no manual input for consecutive five-day workweeks.
+In the case of Aalborg University; if chwifi has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration, thus ensuring no manual input for consecutive five-day workweeks.
 
 Note that this script has been developed specifically for use at Aalborg University's campuses but should be easily adaptable to other CAS-like authentication systems.
 
 ## Installation
-Installing `chwifi` through your package manager is advisable, currently `chwifi` is packaged for AUR and can easily be installed by an AUR-helper:
+- Installing chwifi through a package manager is advisable, currently `chwifi` is packaged for AUR and can be easily installed by an AUR-helper
+    ```shell
+    yay -S chwifi-git
+    ```
 
-```shell
-yay -S chwifi-git
+- Manual installation is possible, but requires some work. Note that updates needs to be applied manually when installing manually.
+    ```shell
+    # Clone the repository and cd into it
+    git clone https://github.com/cogitantium/chwifi.git
+    cd chwifi
+    
+    # Make directory structure
+    mkdir -p /usr/lib/chwifi
+    mkdir -p /usr/bin
+    
+    # Install script to /usr/lib/chwifi
+    install chwifi passwordhandler.sh cashandler.sh setup.sh config.sample -t /usr/lib/chwifi
+    
+    # Symlink script from /usr/lib to /usr/bin
+    ln -s /usr/lib/chwifi/chwifi /usr/bin/chwifi
+    ```
+
+- Upon first run a configuration will be generated. A setup script prompts for username and password for CAS and puts the generated config at `$XDG_CONFIG_HOME/.config/chwifi/config`.
+
+## Usage
+A help message is displayed when passing no arguments, `-h`, or `--help`.
+```
+user@hostname ~> chwifi
+Usage: chwifi [OPTION]... <PROFILE>
+Connect to home or work wireless networks, caching rolling passwords at work
+
+Optional arguments:
+  -s, show [index|today|tomorrow]	display the daily password of the given index or day
+  -r, restart [profile]			restarts the given profile
+  -h, --help				display this help and exit
+
+chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE
+Configuration of this script is done through the 'config' file, for documentation read README.md
 ```
 
-Manual installation is possible, but requires some work. 
-
+To connect to home, pass argument `home`.
 ```shell
-# Clone the repository and cd into it
-git clone https://github.com/cogitantium/chwifi.git
-cd chwifi
+chwifi home
+```
 
-# Make directory structure
-mkdir -p /usr/lib/chwifi
-mkdir -p /usr/bin
+To connect to work with cached password, pass argument `work`.
+```shell
+chwifi work
+```
 
-# Install script to /usr/lib/chwifi
-install chwifi passwordhandler.sh cashandler.sh setup.sh config.sample -t /usr/lib/chwifi
+To show a specific password pass '-s' or 'show' followed by an index, e.g., where 1 is tomorrow's password. Using the keywords 'today' and 'tomorrow' is also supported.
+```shell
+chwifi -s 3
+chwifi show today
+```
 
-# Symlink script from /usr/lib to /usr/bin
-ln -s /usr/lib/chwifi/chwifi /usr/bin/chwifi
+To restart a given profile, pass either `-r` or `restart` followed by the profile-name.
+```shell
+chwifi -r home
+chwifi restart work
 ```
 
 ## Configuration
@@ -82,39 +127,10 @@ Set internal `sudo` for priviledged commands. Defaults to true. Set `sudo` for t
 sudo="sudo"
 ```
 
-## Usage
-To connect to home, pass argument `home`.
-```shell
-./chwifi home
-```
-
-To connect to work with cached password, pass argument `work`.
-```shell
-./chwifi work
-```
-
-To show a specific password pass '-s' or 'show' followed by an index, e.g., where 1 is tomorrow's password. If no index is given, it defaults to today's password.
-```shell
-./chwifi -s 3
-./chwifi show
-```
-
-To restart a given profile, pass either `-r` or `restart` followed by the profile-name.
-```shell
-./chwifi -r home
-./chwifi restart work
-```
-
-To manually enter new, daily password for work-profile, pass a single argument of the form `^[a-z]+[0-9]+[a-z]+$`.
-```shell
-./chwifi foo42bar
-```
-
 ## Example
-Example shows script call, with work keyword, printing cached password, and username for fetching passwords.
+Example shows chwifi call, with work keyword, printing cached password if foun, and username used for updating cached passwords.
 ```
 user@hostname ~> chwifi work
-Using config found at /home/user/.config/chwifi/config
 Work-keyword found, checking for cached password
 Daily work password is: amount42wind
 Stopping all profiles
