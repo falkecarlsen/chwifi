@@ -103,8 +103,9 @@ network_manager_home_profile="home"
 network_manager_work_profile="work"
 ```
 
-Options for macchanger, `-e` is default, which randomises only device-specific bytes and retains vendor-information.
+Options for macchanger, default is enabled which is set during setup and is either `y` or `n`, `-e` is the default option, which randomises only device-specific bytes and retains vendor-information.
 ```shell
+macchanger_enabled="$MAC_ENABLED"
 macchanger_options="-e"
 ```
 
