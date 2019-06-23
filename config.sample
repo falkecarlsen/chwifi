@@ -27,6 +27,7 @@ network_manager_home_profile="home"
 network_manager_work_profile="work"
 
 # Options for macchanger, -e, which randomises only device-specific bytes.
+macchanger_enabled="$MAC_ENABLED"
 macchanger_options="-e"
 
 # Settings for passwordhandler, edit `dest` for other CAS-destination, if desired.

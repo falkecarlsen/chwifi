@@ -20,15 +20,21 @@ setup() {
     if [ ! -f "$config/config" ]; then 
         printf "Configuration does not exist. Creating one now\nPlease input username/email:\n"
         read -r username
-        printf "Note that password will be visible! Please input password:\n"
+        printf "Please input password:\n"
         read -r -s password
-        printf "Received username: %s, password: %s.\nCreating config at %s/config\n" "$username" "$password" "$config"
+        printf "Enable macchanger to randomise MAC-address upon each connection? [Y/n]: "
+        read -r mac_enable
+        # Set mac_enable to default of true if unset
+        mac_enable="${mac_enable:-y}"
+        printf "\nReceived username: %s and macchanger: %s.\nCreating config at %s/config\n" "$username" "$mac_enable" "$config"
 
         # Copy config.sample into dir
         cp /usr/lib/chwifi/config.sample "$config/config"
         # Regex username and password into config
         sed -i "s/\"username\"$/\"$username\"/" "$config/config"
         sed -i "s/\"password\"$/\"$password\"/" "$config/config"
+        # Regex macchanger boolean into config
+        sed -i "s|\$MAC_ENABLED|$mac_enable|" "$config/config"
         # Regex config directory, using pipe for separator
         sed -i "s|\$XDG_CONFIG_HOME|$config|" "$config/config"
         
