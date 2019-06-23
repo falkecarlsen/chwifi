@@ -24,6 +24,17 @@ setup() {
         read -r -s password
         printf "Enable macchanger to randomise MAC-address upon each connection? [Y/n]: "
         read -r mac_enable
+
+        # Keep prompting for input, if nonzero and non-conforming to booleans
+        while [[ ! "$mac_enable" =~ ^[yYnN]$ ]] && [[ -n $mac_enable ]]
+        do
+            printf "Input '%s' for macchanger enabling does not match boolean pattern [yYnN].\nEnable macchanger? [Y/n]: " "$mac_enable"
+            read -r mac_enable
+        done
+
+        # Convert answer to lowercase
+        mac_enable=$(echo "$mac_enable" | tr '[:upper:]' '[:lower:]')
+
         # Set mac_enable to default of true if unset
         mac_enable="${mac_enable:-y}"
         printf "\nReceived username: %s and macchanger: %s.\nCreating config at %s/config\n" "$username" "$mac_enable" "$config"
