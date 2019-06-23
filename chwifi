@@ -47,7 +47,9 @@ set_adapter_down() {
 connection_routine() {
     stop_all
     set_adapter_down
-    change_mac
+    if [[ "$macchanger_enabled" =~ ^y$ ]]; then
+        change_mac
+    fi
     connect "$1"
     update_routine
 }
