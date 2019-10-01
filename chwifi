@@ -102,9 +102,12 @@ update_profiles() {
 }
 
 check_profile() {
+    # Set internal field separator and read other profiles to array
     IFS=','
     read -r -a profiles <<< "$network_manager_other_profiles"
+    # Reset internal field separator to default value
     IFS=' '
+    # Check user input against profile array, return true if match is found, otherwise false
     for x in "${profiles[@]}"; do
         if [ "$x" == "$1" ] ; then
             return 0
