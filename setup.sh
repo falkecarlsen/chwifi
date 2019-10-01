@@ -40,10 +40,10 @@ setup() {
         printf "\nReceived username: %s and macchanger: %s.\nCreating config at %s/config\n" "$username" "$mac_enable" "$config"
 
         profiles=""
-        # Grab other profiles and concatenate in string, using semicolon as seperator
+        # Grab other profiles and concatenate in string, using comma as delimiter
         for entry in "/etc/netctl"/*; do
             if [ -f "$entry" ]; then
-                profiles+=$(echo "$entry" | sed -e 's/\/etc\/netctl\///g')';'
+                profiles+=$(echo "$entry" | sed -e 's/\/etc\/netctl\///g')','
             fi
         done
         # Remove final semicolon from string

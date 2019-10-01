@@ -92,7 +92,7 @@ update_profiles() {
     # Grab other profiles and concatenate in string, using semicolon as seperator
     for entry in "/etc/netctl"/*; do
         if [ -f "$entry" ]; then
-            profiles+=$(echo "$entry" | sed -e 's/\/etc\/netctl\///g')';'
+            profiles+=$(echo "$entry" | sed -e 's/\/etc\/netctl\///g')','
         fi
     done
     # Remove final semicolon from string
@@ -102,7 +102,7 @@ update_profiles() {
 }
 
 check_profile() {
-    IFS=';'
+    IFS=','
     read -r -a profiles <<< "$network_manager_other_profiles"
     IFS=' '
     for x in "${profiles[@]}"; do
