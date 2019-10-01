@@ -85,6 +85,33 @@ update_routine() {
     fi
 }
 
+update_profiles() {
+    printf '%s\n' "Updating profiles..."
+    profiles=""
+    # Grab other profiles and concatenate in string, using semicolon as seperator
+    for entry in "/etc/netctl"/*; do
+        if [ -f "$entry" ]; then
+            profiles+=$(echo "$entry" | sed -e 's/\/etc\/netctl\///g')';'
+        fi
+    done
+    # Remove final semicolon from string
+    profiles=${profiles::-1}
+    # Regex other profiles into config
+    sed -i "s/\"$network_manager_other_profiles\"$/\"$profiles\"/" "$XDG_CONFIG_HOME/config"
+}
+
+check_profile() {
+    IFS=';'
+    read -r -a profiles <<< "$network_manager_other_profiles"
+    IFS=' '
+    for x in "${profiles[@]}"; do
+        if [ "$x" == "$1" ] ; then
+            return 0
+        fi
+    done
+    return 1
+}
+
 # Change MAC-address according to sourced options and print new MAC-address
 change_mac() {
     printf "New MAC-address: "
@@ -198,6 +225,19 @@ while (( "$#" )); do
         home|work) 
             profile=$1
             # Shift remaining arguments off stack
+            break
+            ;;
+        -p|profile)
+            if check_profile "$2" ; then
+                profile=$2
+            else
+                err_input=1
+            fi
+            break
+            ;;
+        -u|update)
+            # Update other profiles
+            update_profiles
             break
             ;;
         *)
