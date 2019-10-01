@@ -87,6 +87,7 @@ update_routine() {
 
 update_profiles() {
     printf '%s\n' "Updating profiles..."
+    config=$(config_dir)
     profiles=""
     # Grab other profiles and concatenate in string, using semicolon as seperator
     for entry in "/etc/netctl"/*; do
@@ -97,7 +98,7 @@ update_profiles() {
     # Remove final semicolon from string
     profiles=${profiles::-1}
     # Regex other profiles into config
-    sed -i "s/\"$network_manager_other_profiles\"$/\"$profiles\"/" "$XDG_CONFIG_HOME/config"
+    sed -i "s/\"$network_manager_other_profiles\"$/\"$profiles\"/" "$config/config"
 }
 
 check_profile() {
@@ -153,7 +154,10 @@ connect_dispatch() {
         
         # Change work profile password and do connection routine
         change_profile_password "$network_manager_work_profile" "$daily_password"
-        connection_routine "$network_manager_work_profile" 
+        connection_routine "$network_manager_work_profile"
+    elif check_profile "$1" ; then
+        printf '%s\n' "Connecting to $1"
+        connection_routine "$1"
     else
         printf "An error occured while connecting to: '%s', please check" "$1"
         exit 1
@@ -228,11 +232,7 @@ while (( "$#" )); do
             break
             ;;
         -p|profile)
-            if check_profile "$2" ; then
-                profile=$2
-            else
-                err_input=1
-            fi
+            profile=$2
             break
             ;;
         -u|update)
