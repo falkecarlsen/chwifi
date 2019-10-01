@@ -84,7 +84,7 @@ chwifi -r home
 chwifi restart work
 ```
 
-To update recognised profiles, pass either `-u` or `update`
+To update recognised profiles, pass either `-u` or `update`.
 ```shell
 chwifi -u
 chwifi update
@@ -115,7 +115,7 @@ network_manager_stopall="stop-all"
 network_manager_restart="restart"
 network_manager_home_profile="home"
 network_manager_work_profile="work"
-network_manager_other_profiles="other-profiles"
+network_manager_other_profiles="a-profile,another-profile,last-profile"
 ```
 
 Options for macchanger, default is enabled which is set during setup and is either `y` or `n`, `-e` is the default option, which randomises only device-specific bytes and retains vendor-information.
