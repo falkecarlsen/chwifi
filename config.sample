@@ -25,7 +25,7 @@ network_manager_stopall="stop-all"
 network_manager_restart="restart"
 network_manager_home_profile="home"
 network_manager_work_profile="work"
-network_manager_other_profiles="other-profiles"
+network_manager_other_profiles="a-profile,another-profile,last-profile"
 
 # Options for macchanger, -e, which randomises only device-specific bytes.
 macchanger_enabled="$MAC_ENABLED"

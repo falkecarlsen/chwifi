@@ -59,7 +59,7 @@ setup() {
         # Regex config directory, using pipe for separator
         sed -i "s|\$XDG_CONFIG_HOME|$config|" "$config/config"
         # Regex other profiles into config
-        sed -i "s/\"other-profiles\"$/\"$profiles\"/" "$config/config"
+        sed -i "s/\"a-profile,another-profile,last-profile\"$/\"$profiles\"/" "$config/config"
         
         if [ -f "$config/config" ]; then
             printf "Successfully created config at: %s/config\n\n" "$config"
