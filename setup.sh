@@ -46,7 +46,7 @@ setup() {
                 profiles+=$(echo "$entry" | sed -e 's/\/etc\/netctl\///g')','
             fi
         done
-        # Remove final semicolon from string
+        # Remove final comma from string
         profiles=${profiles::-1}
 
         # Copy config.sample into dir
