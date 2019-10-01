@@ -109,6 +109,7 @@ check_profile() {
     IFS=' '
     # Check user input against profile array, return true if match is found, otherwise false
     for x in "${profiles[@]}"; do
+        # Strip leading and trailing white spaces, in case the user manually input other profiles and included these
         x=$(echo "$x" | sed -e 's/^\s*//g')
         x=$(echo "$x" | sed -e 's/\s*$//g')
         if [ "$x" == "$1" ] ; then
