@@ -37,20 +37,30 @@ setup() {
 
         # Set mac_enable to default of true if unset
         mac_enable="${mac_enable:-y}"
-        printf "\nReceived username: %s and macchanger: %s.\nCreating config at %s/config\n" "$username" "$mac_enable" "$config"
 
-        printf "Please choose a wireless adapter:\n"
         # Read filenames of wireless adapters into array, excluding localhost
-        readarray adapters <<< "$(ls /sys/class/net/ | grep -v ^lo)"
+        readarray adapters <<< "$(ls /sys/class/net/ | grep -v lo | grep -v enp)"
         i=1
+        default_adapter=0
         # Print possible adapters to user to allow for selection
         for x in "${adapters[@]}" ; do
             # Regex out newlines from each element
             adapters[i-1]=$(echo "$x" | sed -e 's/\n//g')
-            echo "$i: $(basename "$x")"
-            let "i++"
+            adapter_name="$(basename "$x")"
+            printf "\t%s: %s\n" "$i" "$adapter_name"
+
+            # Check if a 'wlp*' adapter exists, and remember index
+            if [[ "$adapter_name" =~ "wlp" ]]; then
+                default_adapter="$i"
+            fi
+            ((i++))
         done
+
+        printf "Please choose a wireless adapter[%s]: " "$default_adapter"
+
         read -r wireless_adapter
+        # If answer was null, choose default adapter
+        wireless_adapter=${wireless_adapter:-$default_adapter}
 
         profiles=""
         # Grab other profiles and concatenate in string, using comma as delimiter
@@ -61,6 +71,10 @@ setup() {
         done
         # Remove final comma from string
         profiles=${profiles::-1}
+
+        printf "Detected the following profiles:\n\t%s\n" "$profiles"
+        
+        printf "Creating config at %s/config\n" "$config"
 
         # Copy config.sample into dir
         cp /usr/lib/chwifi/config.sample "$config/config"
