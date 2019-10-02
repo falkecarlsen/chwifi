@@ -92,7 +92,7 @@ update_profiles() {
     # Grab other profiles and concatenate in string, using comma as delimiter
     for entry in "/etc/netctl"/*; do
         if [ -f "$entry" ]; then
-            profiles+=$(echo "$entry" | sed -e 's/\/etc\/netctl\///g')','
+            profiles+=$(echo "$(basename $entry)")','
         fi
     done
     # Remove final comma from string
