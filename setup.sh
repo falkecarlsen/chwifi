@@ -39,6 +39,16 @@ setup() {
         mac_enable="${mac_enable:-y}"
         printf "\nReceived username: %s and macchanger: %s.\nCreating config at %s/config\n" "$username" "$mac_enable" "$config"
 
+        profiles=""
+        # Grab other profiles and concatenate in string, using comma as delimiter
+        for entry in "/etc/netctl"/*; do
+            if [ -f "$entry" ]; then
+                profiles+=$(echo "$(basename $entry)")','
+            fi
+        done
+        # Remove final comma from string
+        profiles=${profiles::-1}
+
         # Copy config.sample into dir
         cp /usr/lib/chwifi/config.sample "$config/config"
         # Regex username and password into config
@@ -48,6 +58,8 @@ setup() {
         sed -i "s|\$MAC_ENABLED|$mac_enable|" "$config/config"
         # Regex config directory, using pipe for separator
         sed -i "s|\$XDG_CONFIG_HOME|$config|" "$config/config"
+        # Regex other profiles into config
+        sed -i "s/\"a-profile,another-profile,last-profile\"$/\"$profiles\"/" "$config/config"
         
         if [ -f "$config/config" ]; then
             printf "Successfully created config at: %s/config\n\n" "$config"

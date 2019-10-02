@@ -48,6 +48,8 @@ Connect to home or work wireless networks, caching rolling passwords at work
 Optional arguments:
   -s, show [index|today|tomorrow]	display the daily password of the given index or day
   -r, restart [profile]			restarts the given profile
+  -p, profile [profile]			connects to any profile under netctl
+  -u, update				update profiles under netctl
   -h, --help				display this help and exit
 
 chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE
@@ -64,6 +66,12 @@ To connect to work with cached password, pass argument `work`.
 chwifi work
 ```
 
+To connect to a given profile under netctl, pass either `-p` or `profile` followed by the profile-name.
+```shell
+chwifi -p profile-name
+chwifi profile profile-name
+```
+
 To show a specific password pass '-s' or 'show' followed by an index, e.g., where 1 is tomorrow's password. Using the keywords 'today' and 'tomorrow' is also supported.
 ```shell
 chwifi -s 3
@@ -74,6 +82,12 @@ To restart a given profile, pass either `-r` or `restart` followed by the profil
 ```shell
 chwifi -r home
 chwifi restart work
+```
+
+To update recognised profiles, pass either `-u` or `update`.
+```shell
+chwifi -u
+chwifi update
 ```
 
 ## Configuration
@@ -101,6 +115,7 @@ network_manager_stopall="stop-all"
 network_manager_restart="restart"
 network_manager_home_profile="home"
 network_manager_work_profile="work"
+network_manager_other_profiles="a-profile,another-profile,last-profile"
 ```
 
 Options for macchanger, default is enabled which is set during setup and is either `y` or `n`, `-e` is the default option, which randomises only device-specific bytes and retains vendor-information.
