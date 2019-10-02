@@ -39,6 +39,19 @@ setup() {
         mac_enable="${mac_enable:-y}"
         printf "\nReceived username: %s and macchanger: %s.\nCreating config at %s/config\n" "$username" "$mac_enable" "$config"
 
+        printf "Please choose a wireless adapter:\n"
+        # Read filenames of wireless adapters into array, excluding localhost
+        readarray adapters <<< "$(ls /sys/class/net/ | grep -v ^lo)"
+        i=1
+        # Print possible adapters to user to allow for selection
+        for x in "${adapters[@]}" ; do
+            # Regex out newlines from each element
+            adapters[i-1]=$(echo "$x" | sed -e 's/\n//g')
+            echo "$i: $(basename "$x")"
+            let "i++"
+        done
+        read -r wireless_adapter
+
         profiles=""
         # Grab other profiles and concatenate in string, using comma as delimiter
         for entry in "/etc/netctl"/*; do
@@ -60,6 +73,8 @@ setup() {
         sed -i "s|\$XDG_CONFIG_HOME|$config|" "$config/config"
         # Regex other profiles into config
         sed -i "s/\"a-profile,another-profile,last-profile\"$/\"$profiles\"/" "$config/config"
+        # Regex wireless adapter into config
+        sed -i "s/\"adapter\"$/\"${adapters[wireless_adapter - 1]}\"/" "$config/config"
         
         if [ -f "$config/config" ]; then
             printf "Successfully created config at: %s/config\n\n" "$config"
