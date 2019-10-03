@@ -91,7 +91,7 @@ update_profiles() {
     profiles=""
     # Grab other profiles and concatenate in string, using comma as delimiter
     for entry in "/etc/netctl"/*; do
-        if [ -f "$entry" ] && [[ ! "$entry" =~ work ]] ; then
+        if [ -f "$entry" ] && [[ ! "$entry" =~ ^work$ ]] ; then
             profiles+=$(echo "$(basename $entry)")','
         fi
     done
