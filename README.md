@@ -43,7 +43,7 @@ A help message is displayed when passing no arguments, `-h`, or `--help`.
 ```
 user@hostname ~> chwifi
 Usage: chwifi [OPTION]... <PROFILE>
-Connect any network-manager wireless networks, caching rolling passwords at work
+Connect to any netctl wireless networks, caching rolling passwords at work
 
 Optional arguments:
   -s, show [index|today|tomorrow]	display the daily password of the given index or day
