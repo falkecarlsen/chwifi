@@ -6,7 +6,7 @@
 </p>
 
 # chwifi
-This tool automates network-switching for users who connect wirelessly at home and at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. Device-specific bytes of MAC-address are randomised during each connection routine. 
+This tool automates network-switching for users who connect wirelessly a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. Device-specific bytes of MAC-address are randomised during each connection routine. Furthermore, connecting to any other network profile is supported.
 
 Through scripting CAS-login, downloading currently available passwords, caching them locally, and matching daily password with given date, automatic network-manager profile configuration is achieved for following days specified by service. 
 In the case of Aalborg University; if chwifi has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration, thus ensuring no manual input for consecutive five-day workweeks.
@@ -43,12 +43,11 @@ A help message is displayed when passing no arguments, `-h`, or `--help`.
 ```
 user@hostname ~> chwifi
 Usage: chwifi [OPTION]... <PROFILE>
-Connect to home or work wireless networks, caching rolling passwords at work
+Connect any network-manager wireless networks, caching rolling passwords at work
 
 Optional arguments:
   -s, show [index|today|tomorrow]	display the daily password of the given index or day
   -r, restart [profile]			restarts the given profile
-  -p, profile [profile]			connects to any profile under netctl
   -u, update				update profiles under netctl
   -h, --help				display this help and exit
 
@@ -56,20 +55,11 @@ chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for deta
 Configuration of this script is done through the 'config' file, for documentation read README.md
 ```
 
-To connect to home, pass argument `home`.
+To connect to a given profile under netctl, pass its' name as an argument.
 ```shell
 chwifi home
-```
-
-To connect to work with cached password, pass argument `work`.
-```shell
 chwifi work
-```
-
-To connect to a given profile under netctl, pass either `-p` or `profile` followed by the profile-name.
-```shell
-chwifi -p profile-name
-chwifi profile profile-name
+chwifi profile-name
 ```
 
 To show a specific password pass '-s' or 'show' followed by an index, e.g., where 1 is tomorrow's password. Using the keywords 'today' and 'tomorrow' is also supported.
@@ -84,7 +74,7 @@ chwifi -r home
 chwifi restart work
 ```
 
-To update recognised profiles, pass either `-u` or `update`.
+To update recognised profiles, pass either `-u` or `update`. This should be done whenever a profile is added or removed from the network-manager.
 ```shell
 chwifi -u
 chwifi update
