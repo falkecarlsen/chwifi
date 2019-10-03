@@ -74,7 +74,7 @@ chwifi -r home
 chwifi restart work
 ```
 
-To update recognised profiles, pass either `-u` or `update`. This should be done whenever a profile is added or removed from the network-manager.
+To update recognised profiles, pass either `-u` or `update`. This should be done whenever a profile is added or removed.
 ```shell
 chwifi -u
 chwifi update
