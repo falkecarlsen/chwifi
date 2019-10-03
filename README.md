@@ -6,7 +6,7 @@
 </p>
 
 # chwifi
-This tool automates network-switching for users who connect wirelessly a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. Device-specific bytes of MAC-address are randomised during each connection routine. Furthermore, connecting to any other network profile is supported.
+This tool automates network-switching for users who connect wirelessly at a workplace employing a rolling-password model for their wireless networks by automatically configuring network profiles according to locally cached passwords. Device-specific bytes of MAC-address are randomised during each connection routine. Furthermore, connecting to any other network profile is supported.
 
 Through scripting CAS-login, downloading currently available passwords, caching them locally, and matching daily password with given date, automatic network-manager profile configuration is achieved for following days specified by service. 
 In the case of Aalborg University; if chwifi has been invoked within the previous three days, the current daily password will be cached and available for automatic configuration, thus ensuring no manual input for consecutive five-day workweeks.
@@ -74,7 +74,7 @@ chwifi -r home
 chwifi restart work
 ```
 
-To update recognised profiles, pass either `-u` or `update`. This should be done whenever a profile is added or removed from the network-manager.
+To update recognised profiles, pass either `-u` or `update`. This should be done whenever a profile is added or removed.
 ```shell
 chwifi -u
 chwifi update
