@@ -16,7 +16,7 @@ password_syntax="^[a-z]+[0-9]+[a-z]+$"
 sudo="sudo"
 
 # Settings for network manager operations, adjust according to your own system. Default is netctl as network manager and assumes profiles named 'home' and 'work'.
-wireless_adapter="wlp3s0"
+wireless_adapter="adapter"
 network_manager="netctl"
 network_manager_location="/etc/netctl/"
 network_manager_connect="start"
