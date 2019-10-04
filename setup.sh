@@ -22,6 +22,12 @@ setup() {
         read -r username
         printf "Please input password:\n"
         read -r -s password
+
+        default_work_profile='work'
+        printf "Please input the name of the work profile[%s]:\n" "$default_work_profile"
+        read -r work_profile
+        work_profile=${work_profile:-$default_work_profile}
+
         printf "Enable macchanger to randomise MAC-address upon each connection? [Y/n]: "
         read -r mac_enable
 
@@ -42,7 +48,7 @@ setup() {
         profiles=""
         # Grab other profiles and concatenate in string, using comma as delimiter
         for entry in "/etc/netctl"/*; do
-            if [ -f "$entry" ]; then
+            if [ -f "$entry" ] && [[ ! "$entry" =~ ^$work_profile$ ]] ; then
                 profiles+=$(echo "$(basename $entry)")','
             fi
         done
@@ -54,6 +60,8 @@ setup() {
         # Regex username and password into config
         sed -i "s/\"username\"$/\"$username\"/" "$config/config"
         sed -i "s/\"password\"$/\"$password\"/" "$config/config"
+        # Regex work profile name into config
+        sed -i "s/\"work-profile\"$/\"$work_profile\"/" "$config/config"
         # Regex macchanger boolean into config
         sed -i "s|\$MAC_ENABLED|$mac_enable|" "$config/config"
         # Regex config directory, using pipe for separator

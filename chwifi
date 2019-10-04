@@ -76,7 +76,7 @@ wait_for_network() {
 update_routine() {
     printf '%s\n' "Waiting for network connection..."
     wait_for_network
-    printf '%s\n' "Network connection established, updating cached passwords" 
+    printf '%s\n' "Network connection established, updating cached passwords"
     update_passwords
     if [[ $? -eq 0 ]]; then
         printf "Successfully updated cached passwords\n"
@@ -91,7 +91,7 @@ update_profiles() {
     profiles=""
     # Grab other profiles and concatenate in string, using comma as delimiter
     for entry in "/etc/netctl"/*; do
-        if [ -f "$entry" ]; then
+        if [ -f "$entry" ] && [[ ! "$entry" =~ ^$network_manager_work_profile$ ]] ; then
             profiles+=$(echo "$(basename $entry)")','
         fi
     done
@@ -138,13 +138,8 @@ display_daily_password() {
 }
 
 connect_dispatch() {
-    # If home, then connect and update cached passwords when connection is given
-    if [[ "$1" =~ home ]]; then
-        printf '%s\n' "Connecting to home"
-        connection_routine "$network_manager_home_profile"
-        
     # If work, then find password, connect and update cached passwords when connection is given
-    elif [[ "$1" =~ work ]]; then
+    if [[ "$1" =~ ^$network_manager_work_profile$ ]]; then
         printf '%s\n' "Connecting to work, checking for cached password"
         # Grab daily password from helper
         daily_password=$(get_daily_password)
@@ -161,22 +156,19 @@ connect_dispatch() {
         # Change work profile password and do connection routine
         change_profile_password "$network_manager_work_profile" "$daily_password"
         connection_routine "$network_manager_work_profile"
-    elif check_profile "$1" ; then
+    else
+        # If not work, simply connect to given profile
         printf '%s\n' "Connecting to $1"
         connection_routine "$1"
-    else
-        printf "An error occured while connecting to: '%s', please check" "$1"
-        exit 1
     fi 
 }
 
 display_help() {
     printf "Usage: chwifi [OPTION]... <PROFILE>\n"
-    printf "Connect to home or work wireless networks, caching rolling passwords at work\n\n"
+    printf "Connect to any netctl wireless networks, caching rolling passwords at work\n\n"
     printf "Optional arguments:\n"
     printf "  -s, show [index|today|tomorrow]\tdisplay the daily password of the given index or day\n"
     printf "  -r, restart [profile]\t\t\trestarts the given profile\n"
-    printf "  -p, profile [profile]\t\t\tconnects to any profile under netctl\n"
     printf "  -u, update\t\t\t\tupdate profiles under netctl\n"
     printf "  -h, --help\t\t\t\tdisplay this help and exit\n\n"
     printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n"
@@ -234,23 +226,19 @@ while (( "$#" )); do
             display_help
             exit 0
             ;;
-        home|work) 
-            profile=$1
-            # Shift remaining arguments off stack
-            break
-            ;;
-        -p|profile)
-            profile=$2
-            break
-            ;;
         -u|update)
             # Update other profiles
             update_profiles
             break
             ;;
         *)
-            # Unknown parameter, register error and break
-            err_input=1
+            # If an unrecognized argument is given, check if it is a recognized netctl profile
+            if check_profile "$1" ; then
+                profile=$1
+            else
+                # Unknown parameter, register error and break
+                err_input=1
+            fi
             break
             ;;
     esac
