@@ -65,6 +65,12 @@ change_profile_password() {
 }
 
 wait_for_network() {
+    adapter_status=$(ip address show "$wireless_adapter")
+    # If adapter status is down at this point, connection failed
+    if [[ "$adapter_status" =~ "DOWN" ]] ; then
+        printf "Could not connect, please ensure that the network adapter, '%s', is available.\n" "$wireless_adapter"
+        exit 1
+    fi
     connection_start_time=$(date +%s.%N)
     until $(curl --output /dev/null --silent --head --fail --connect-timeout 1 "$network_up_host"); do
         sleep 0.25s
@@ -80,7 +86,7 @@ update_routine() {
     update_passwords
     if [[ $? -eq 0 ]]; then
         printf "Successfully updated cached passwords\n"
-    else 
+    else
         printf "Failed to update cached passwords!\n"
     fi
 }
