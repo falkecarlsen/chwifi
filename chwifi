@@ -65,6 +65,11 @@ change_profile_password() {
 }
 
 wait_for_network() {
+    adapter_status=$(ip addr | grep wlp3s0)
+    # If adapter status is down at this point, connection failed
+    if [[ "$adapter_status" =~ "DOWN" ]] ; then
+        exit 1
+    fi
     connection_start_time=$(date +%s.%N)
     until $(curl --output /dev/null --silent --head --fail --connect-timeout 1 "$network_up_host"); do
         sleep 0.25s
@@ -76,11 +81,11 @@ wait_for_network() {
 update_routine() {
     printf '%s\n' "Waiting for network connection..."
     wait_for_network
-    printf '%s\n' "Network connection established, updating cached passwords" 
+    printf '%s\n' "Network connection established, updating cached passwords"
     update_passwords
     if [[ $? -eq 0 ]]; then
         printf "Successfully updated cached passwords\n"
-    else 
+    else
         printf "Failed to update cached passwords!\n"
     fi
 }
