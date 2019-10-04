@@ -28,7 +28,7 @@ curl -s -k --data "username=$username&password=$password&lt=$cas_id&execution=e1
 curl_dest=`grep Location $header_dump | sed 's/Location: //'`
 
 if [[ "$curl_dest" = "" ]]; then
-    printf '%s\n' "Cannot login. Check if you can login in a browser using user/pass = $username/$password and the following url: https://$cas_hostname/cas/login?service=$dest"
+    printf '%s\n' "Cannot login. Check if you can login in a browser using user = $username and the following url: https://$cas_hostname/cas/login?service=$dest"
     exit 1
 fi
 
