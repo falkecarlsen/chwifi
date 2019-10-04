@@ -139,7 +139,7 @@ display_daily_password() {
 
 connect_dispatch() {
     # If work, then find password, connect and update cached passwords when connection is given
-    if [[ "$1" =~ work ]]; then
+    if [[ "$1" =~ $network_manager_work_profile ]]; then
         printf '%s\n' "Connecting to work, checking for cached password"
         # Grab daily password from helper
         daily_password=$(get_daily_password)
