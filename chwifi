@@ -92,7 +92,7 @@ update_routine() {
 }
 
 update_profiles() {
-    printf '%s\n' "Updating recognised netctl profiles profiles..."
+    printf '%s\n' "Updating recognised netctl profiles..."
     config=$(config_dir)
     profiles=""
     # Grab other profiles and concatenate in string, using comma as delimiter
