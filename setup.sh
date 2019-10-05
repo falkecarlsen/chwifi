@@ -24,7 +24,7 @@ setup() {
         read -r -s password
 
         default_work_profile='work'
-        printf "Please input the name of the work profile[%s]:\n" "$default_work_profile"
+        printf "Please input the name of the work profile to use [%s]:" "$default_work_profile"
         read -r work_profile
         work_profile=${work_profile:-$default_work_profile}
 
