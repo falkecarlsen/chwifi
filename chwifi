@@ -92,7 +92,7 @@ update_routine() {
 }
 
 update_profiles() {
-    printf '%s\n' "Updating profiles..."
+    printf '%s\n' "Updating recognised netctl profiles profiles..."
     config=$(config_dir)
     profiles=""
     # Grab other profiles and concatenate in string, using comma as delimiter
@@ -175,7 +175,6 @@ display_help() {
     printf "Optional arguments:\n"
     printf "  -s, show [index|today|tomorrow]\tdisplay the daily password of the given index or day\n"
     printf "  -r, restart [profile]\t\t\trestarts the given profile\n"
-    printf "  -u, update\t\t\t\tupdate profiles under netctl\n"
     printf "  -h, --help\t\t\t\tdisplay this help and exit\n\n"
     printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n"
     printf "Configuration of this script is done through the 'config' file, for documentation read README.md\n"
@@ -183,6 +182,9 @@ display_help() {
 
 # Save arguments
 args=$*
+
+# Update recognised netctl profiles
+update_profiles
 
 # Parse all arguments
 while (( "$#" )); do
@@ -231,11 +233,6 @@ while (( "$#" )); do
             # Print help and exit
             display_help
             exit 0
-            ;;
-        -u|update)
-            # Update other profiles
-            update_profiles
-            break
             ;;
         *)
             # If an unrecognized argument is given, check if it is a recognized netctl profile
