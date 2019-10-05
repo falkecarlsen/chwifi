@@ -235,7 +235,7 @@ while (( "$#" )); do
             exit 0
             ;;
         *)
-            # If an unrecognized argument is given, check if it is a recognized netctl profile
+            # If an unrecognised argument is given, check if it is a recognised netctl profile
             if check_profile "$1" ; then
                 profile=$1
             else
