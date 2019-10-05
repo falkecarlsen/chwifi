@@ -48,7 +48,6 @@ Connect to any netctl wireless networks, caching rolling passwords at work
 Optional arguments:
   -s, show [index|today|tomorrow]	display the daily password of the given index or day
   -r, restart [profile]			restarts the given profile
-  -u, update				update profiles under netctl
   -h, --help				display this help and exit
 
 chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE
@@ -72,12 +71,6 @@ To restart a given profile, pass either `-r` or `restart` followed by the profil
 ```shell
 chwifi -r home
 chwifi restart work
-```
-
-To update recognised profiles, pass either `-u` or `update`. This should be done whenever a profile is added or removed.
-```shell
-chwifi -u
-chwifi update
 ```
 
 ## Configuration
@@ -137,7 +130,8 @@ sudo="sudo"
 Example shows chwifi call, with work keyword, printing cached password if foun, and username used for updating cached passwords.
 ```
 user@hostname ~> chwifi work
-Work-keyword found, checking for cached password
+Updating recognised netctl profiles...
+Connecting to work, checking for cached password
 Daily work password is: amount42wind
 Stopping all profiles
 New MAC-address: 00:1a:e9:cb:55:ef 

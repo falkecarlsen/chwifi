@@ -68,7 +68,7 @@ wait_for_network() {
     adapter_status=$(ip address show "$wireless_adapter")
     # If adapter status is down at this point, connection failed
     if [[ "$adapter_status" =~ "DOWN" ]] ; then
-        printf "Could not connect, please ensure that the network adapter, '%s', is available.\n" "$wireless_adapter"
+        printf "Could not connect, please ensure that the network is available.\n"
         exit 1
     fi
     connection_start_time=$(date +%s.%N)
@@ -92,7 +92,7 @@ update_routine() {
 }
 
 update_profiles() {
-    printf '%s\n' "Updating profiles..."
+    printf '%s\n' "Updating recognised netctl profiles..."
     config=$(config_dir)
     profiles=""
     # Grab other profiles and concatenate in string, using comma as delimiter
@@ -175,7 +175,6 @@ display_help() {
     printf "Optional arguments:\n"
     printf "  -s, show [index|today|tomorrow]\tdisplay the daily password of the given index or day\n"
     printf "  -r, restart [profile]\t\t\trestarts the given profile\n"
-    printf "  -u, update\t\t\t\tupdate profiles under netctl\n"
     printf "  -h, --help\t\t\t\tdisplay this help and exit\n\n"
     printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n"
     printf "Configuration of this script is done through the 'config' file, for documentation read README.md\n"
@@ -183,6 +182,9 @@ display_help() {
 
 # Save arguments
 args=$*
+
+# Update recognised netctl profiles
+update_profiles
 
 # Parse all arguments
 while (( "$#" )); do
@@ -232,13 +234,8 @@ while (( "$#" )); do
             display_help
             exit 0
             ;;
-        -u|update)
-            # Update other profiles
-            update_profiles
-            break
-            ;;
         *)
-            # If an unrecognized argument is given, check if it is a recognized netctl profile
+            # If an unrecognised argument is given, check if it is a recognised netctl profile
             if check_profile "$1" ; then
                 profile=$1
             else
