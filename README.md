@@ -130,7 +130,8 @@ sudo="sudo"
 Example shows chwifi call, with work keyword, printing cached password if foun, and username used for updating cached passwords.
 ```
 user@hostname ~> chwifi work
-Work-keyword found, checking for cached password
+Updating recognised netctl profiles...
+Connecting to work, checking for cached password
 Daily work password is: amount42wind
 Stopping all profiles
 New MAC-address: 00:1a:e9:cb:55:ef 
