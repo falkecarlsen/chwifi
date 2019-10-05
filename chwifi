@@ -68,7 +68,7 @@ wait_for_network() {
     adapter_status=$(ip address show "$wireless_adapter")
     # If adapter status is down at this point, connection failed
     if [[ "$adapter_status" =~ "DOWN" ]] ; then
-        printf "Could not connect, please ensure that the network adapter, '%s', is available.\n" "$wireless_adapter"
+        printf "Could not connect, please ensure that the network is available.\n"
         exit 1
     fi
     connection_start_time=$(date +%s.%N)
