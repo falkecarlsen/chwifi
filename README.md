@@ -50,7 +50,7 @@ Optional arguments:
   -r, restart [profile]			restarts the given profile
   -h, --help				display this help and exit
 
-chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE
+chwifi is released under GPL-3.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE
 Configuration of this script is done through the 'config' file, for documentation read README.md
 ```
 
