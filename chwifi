@@ -176,7 +176,7 @@ display_help() {
     printf "  -s, show [index|today|tomorrow]\tdisplay the daily password of the given index or day\n"
     printf "  -r, restart [profile]\t\t\trestarts the given profile\n"
     printf "  -h, --help\t\t\t\tdisplay this help and exit\n\n"
-    printf "chwifi is released under GPL-2.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n"
+    printf "chwifi is released under GPL-3.0 and comes with ABSOLUTELY NO WARRANTY, for details read LICENSE\n"
     printf "Configuration of this script is done through the 'config' file, for documentation read README.md\n"
 }
 
