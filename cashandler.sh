@@ -14,7 +14,7 @@ rm -f $cookie
 rm -f $header_dump
 
 # Visit CAS and get a login form. This includes a unique ID for the form, which we will store in cas_id and attach to our form submission. jsessionid cookie will be set here
-cas_id=`curl -s -k -c $cookie https://$cas_hostname/cas/login?service=$dest | grep name=.lt | sed 's/.*value..//' | sed 's/\".*//'`
+cas_id=`curl -s -k -c $cookie https://$cas_hostname/cas/login?service=$dest | grep name=\"execution\" | sed 's/\"\/>.*//' | sed 's/.*value=\"//'`
 
 if [[ "$cas_id" = "" ]]; then
    printf '%s\n' "Login ticket is empty."
@@ -22,7 +22,7 @@ if [[ "$cas_id" = "" ]]; then
 fi
 
 # Submit the login form, using the cookies saved in the cookie jar and the form submission ID just extracted. We keep the headers from this request as the return value should be a 302 including a "ticket" param which we'll need in the next request
-curl -s -k --data "username=$username&password=$password&lt=$cas_id&execution=e1s1&_eventId=submit" -i -b $cookie -c $cookie https://$cas_hostname/cas/login?service=$dest -D $header_dump -o /dev/null
+curl -s -k --data "username=$username&password=$password&execution=$cas_id&_eventId=submit&geolocation=&submit=LOGIN" -i -b $cookie -c $cookie https://$cas_hostname/cas/login?service=$dest -D $header_dump -o /dev/null
 
 # Visit the URL with the ticket param to finally set the casprivacy and, more importantly, MOD_AUTH_CAS cookie. Now we've got a MOD_AUTH_CAS cookie, anything we do in this session will pass straight through CAS
 curl_dest=`grep Location $header_dump | sed 's/Location: //'`
