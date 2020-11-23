@@ -32,7 +32,7 @@ macchanger_enabled="$MAC_ENABLED"
 macchanger_options="-e"
 
 # Settings for passwordhandler, edit `dest` for other CAS-destination, if desired.
-dest="https://wifipassword.aau.dk/oneday"
+dest="http://wifipassword.aau.dk/oneday"
 password_html_file="/tmp/chwifi-passwords.html"
 password_file="$XDG_CONFIG_HOME/passwords"
 
